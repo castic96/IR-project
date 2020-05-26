@@ -1,4 +1,4 @@
-package cz.zcu.kiv.nlp.ir.entity;
+package cz.zcu.kiv.nlp.ir.trec.data;
 
 public interface Result extends Comparable<Result> {
 

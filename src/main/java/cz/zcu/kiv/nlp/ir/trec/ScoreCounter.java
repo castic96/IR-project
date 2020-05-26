@@ -1,4 +1,4 @@
-package cz.zcu.kiv.nlp.ir;
+package cz.zcu.kiv.nlp.ir.trec;
 
 import java.util.HashMap;
 import java.util.List;

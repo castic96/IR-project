@@ -1,9 +1,9 @@
-package cz.zcu.kiv.nlp.ir;
+package cz.zcu.kiv.nlp.ir.trec;
 
-import cz.zcu.kiv.nlp.ir.entity.Document;
-import cz.zcu.kiv.nlp.ir.entity.DocumentNew;
-import cz.zcu.kiv.nlp.ir.entity.Result;
-import cz.zcu.kiv.nlp.ir.entity.ResultImpl;
+import cz.zcu.kiv.nlp.ir.trec.data.Document;
+import cz.zcu.kiv.nlp.ir.trec.data.DocumentNew;
+import cz.zcu.kiv.nlp.ir.trec.data.Result;
+import cz.zcu.kiv.nlp.ir.trec.data.ResultImpl;
 
 import java.util.*;
 
@@ -114,9 +114,9 @@ public class Index implements Indexer, Searcher {
         for (Map.Entry<String, Double> currentEntry : resultsMap.entrySet()) {
             res = currentEntry.getValue().floatValue();
 
-            if (Float.isNaN(res)) {
-                res = 0f;
-            }
+//            if (Float.isNaN(res)) {
+//                res = 0f;
+//            }
 
             currentResult = new ResultImpl(currentEntry.getKey(), res);
             results.add(currentResult);

@@ -1,8 +1,8 @@
-package cz.zcu.kiv.nlp.ir;
+package cz.zcu.kiv.nlp.ir.trec;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import cz.zcu.kiv.nlp.ir.entity.Record;
+import cz.zcu.kiv.nlp.ir.trec.data.Record;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

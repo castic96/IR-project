@@ -1,8 +1,9 @@
-package cz.zcu.kiv.nlp.ir;
-import cz.zcu.kiv.nlp.ir.entity.Document;
-import cz.zcu.kiv.nlp.ir.entity.DocumentNew;
-import cz.zcu.kiv.nlp.ir.entity.Record;
-import cz.zcu.kiv.nlp.ir.entity.Result;
+package cz.zcu.kiv.nlp.ir.trec;
+
+import cz.zcu.kiv.nlp.ir.trec.data.Document;
+import cz.zcu.kiv.nlp.ir.trec.data.DocumentNew;
+import cz.zcu.kiv.nlp.ir.trec.data.Record;
+import cz.zcu.kiv.nlp.ir.trec.data.Result;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,7 +64,7 @@ public class App {
         documents = convertDataIntoDocument(inputData);
         query1= "dítě si poradí";
         query2 = "vzdělání v podmínkách  příjemných pro život";
-        topResults = 4;
+        topResults = 8;
 
         index = new Index();
 

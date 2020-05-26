@@ -1,4 +1,4 @@
-package cz.zcu.kiv.nlp.ir.entity;
+package cz.zcu.kiv.nlp.ir.trec.data;
 
 /**
  * Created by Tigi on 6.1.2015.

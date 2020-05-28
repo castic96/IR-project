@@ -13,12 +13,14 @@ public class ScoreCounter {
      * @param indexedQuery
      * @return Map of String document id and Double score.
      */
-    public static Map<String, Double> computeScore(Map<String, Map<String, DocInfo>> invertedIndex, Map<String, DocInfo> indexedQuery) {
+    public static Map<String, Double> computeScore(Map<String, Map<String, DocInfo>> invertedIndex,
+                                                   Map<String, DocInfo> indexedQuery, Map<String, Double> norms) {
+
         Map<String, Double> scores = new HashMap<>();
 
         computeScalarProduct(invertedIndex, indexedQuery, scores);
 
-        normalizeScores(invertedIndex, indexedQuery, scores);
+        normalizeScores(invertedIndex, indexedQuery, scores, norms);
 
         return scores;
     }
@@ -62,8 +64,8 @@ public class ScoreCounter {
         return docInfo1.getTfidf() * docInfo2.getTfidf();
     }
 
-    private static void normalizeScores(Map<String, Map<String, DocInfo>> invertedIndex,
-                                        Map<String, DocInfo> indexedQuery, Map<String, Double> scores) {
+    private static void normalizeScores(Map<String, Map<String, DocInfo>> invertedIndex, Map<String, DocInfo> indexedQuery,
+                                        Map<String, Double> scores, Map<String, Double> norms) {
 
         double queryNorm = getQueryNorm(indexedQuery);
         double docNorm;
@@ -74,7 +76,7 @@ public class ScoreCounter {
         for (Map.Entry<String, Double> currentEntry : scores.entrySet()) {
             currentDocId = currentEntry.getKey();
 
-            docNorm = getDocNorm(invertedIndex, currentDocId);
+            docNorm = getDocNorm(currentDocId, norms);
 
             currentValue = currentEntry.getValue();
 
@@ -94,19 +96,8 @@ public class ScoreCounter {
         return Math.sqrt(sum);
     }
 
-    private static double getDocNorm(Map<String, Map<String, DocInfo>> invertedIndex, String docId) {
-        double sum = 0.0;
-
-        for (Map<String, DocInfo> currentDocMap : invertedIndex.values()) {
-
-            DocInfo currentDoc = currentDocMap.get(docId);
-
-            if (currentDoc != null) {
-                sum += Math.pow(currentDoc.getTfidf(), 2.0);
-            }
-        }
-
-        return Math.sqrt(sum);
+    private static double getDocNorm(String docId, Map<String, Double> norms) {
+        return norms.get(docId);
     }
 
 }

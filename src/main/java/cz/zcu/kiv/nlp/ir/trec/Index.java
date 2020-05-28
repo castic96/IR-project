@@ -24,6 +24,8 @@ public class Index implements Indexer, Searcher, Serializable {
 
     private Map<String, Double> idf = new HashMap<>();
 
+    private Map<String, Double> docVectorNorms;
+
     private DocRepo documents;
 
     public Index() {
@@ -33,7 +35,7 @@ public class Index implements Indexer, Searcher, Serializable {
     @Override
     public void index(List<Document> documents) {
 
-        DocRepo docRepo = new DocRepo(documents);
+        this.documents = new DocRepo(documents);
 
         setTerms(documents);
 
@@ -70,7 +72,7 @@ public class Index implements Indexer, Searcher, Serializable {
 
         countQueryTFIDF(indexedQuery);
 
-        Map<String, Double> resultsMap = ScoreCounter.computeScore(invertedIndex, indexedQuery);
+        Map<String, Double> resultsMap = ScoreCounter.computeScore(invertedIndex, indexedQuery, docVectorNorms);
 
         return convertToListOfResult(resultsMap);
     }
@@ -198,7 +200,7 @@ public class Index implements Indexer, Searcher, Serializable {
     }
 
     private List<DocInfo> executeNot(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
-        List<DocInfo> results = isEmpty(docInfoList1, docInfoList2); //TODO: možná nebude fungovat
+        List<DocInfo> results = isEmpty(docInfoList1, docInfoList2);
 
         if (results != null) {
             return results;
@@ -221,7 +223,7 @@ public class Index implements Indexer, Searcher, Serializable {
     }
 
     private List<DocInfo> executeAnd(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
-        List<DocInfo> results = isEmpty(docInfoList1, docInfoList2); //TODO: možná nebude fungovat
+        List<DocInfo> results = isEmpty(docInfoList1, docInfoList2);
 
         if (results != null) {
             return results;
@@ -482,6 +484,11 @@ public class Index implements Indexer, Searcher, Serializable {
 
     private void countDocTFIDF(Map<String, Map<String, DocInfo>> invertedIndex) {
         double currentIdf;
+        double currentTfidf;
+        double oldTfidf;
+        DocInfo currentDocInfo;
+
+        Map<String, Double> norms = new HashMap<>();
 
         for (Map.Entry<String, Map<String, DocInfo>> currentEntry : invertedIndex.entrySet()) {
 
@@ -489,11 +496,30 @@ public class Index implements Indexer, Searcher, Serializable {
                 currentIdf = idf.get(currentEntry.getKey());
 
                 for (Map.Entry<String, DocInfo> currentDoc : currentEntry.getValue().entrySet()) {
-                    currentDoc.getValue().setTfidf(countW(currentIdf, countWF(currentDoc.getValue().getCount())));
+                    currentDocInfo = currentDoc.getValue();
+
+                    currentTfidf = countW(currentIdf, countWF(currentDocInfo.getCount()));
+                    currentDocInfo.setTfidf(currentTfidf);
+
+                    if (!norms.containsKey(currentDocInfo.getDocumentId())) {
+                        norms.put(currentDocInfo.getDocumentId(), 0.0);
+                    }
+
+                    oldTfidf = norms.get(currentDocInfo.getDocumentId());
+                    norms.put(currentDocInfo.getDocumentId(), oldTfidf + Math.pow(currentTfidf, 2.0));
                 }
 
             }
         }
+
+        double normToSqrt;
+
+        for (Map.Entry<String, Double> currentEntry : norms.entrySet()) {
+            normToSqrt = currentEntry.getValue();
+            norms.put(currentEntry.getKey(), Math.sqrt(normToSqrt));
+        }
+
+        docVectorNorms = norms;
     }
 
     private void countQueryTFIDF(Map<String, DocInfo> queryIndex) {

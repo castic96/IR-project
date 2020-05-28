@@ -31,4 +31,9 @@ public class DocInfo {
     public void setTfidf(double tfidf) {
         this.tfidf = tfidf;
     }
+
+    public int documentIdHash() {
+        if (documentId == null)  { return 0; }
+        else { return documentId.hashCode(); }
+    }
 }

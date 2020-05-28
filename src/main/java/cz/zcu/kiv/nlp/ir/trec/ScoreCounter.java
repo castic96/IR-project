@@ -3,7 +3,6 @@ package cz.zcu.kiv.nlp.ir.trec;
 import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ScoreCounter {
@@ -14,7 +13,7 @@ public class ScoreCounter {
      * @param indexedQuery
      * @return Map of String document id and Double score.
      */
-    public static Map<String, Double> computeScore(Map<String, List<DocInfo>> invertedIndex, Map<String, DocInfo> indexedQuery) {
+    public static Map<String, Double> computeScore(Map<String, Map<String, DocInfo>> invertedIndex, Map<String, DocInfo> indexedQuery) {
         Map<String, Double> scores = new HashMap<>();
 
         computeScalarProduct(invertedIndex, indexedQuery, scores);
@@ -24,17 +23,17 @@ public class ScoreCounter {
         return scores;
     }
 
-    private static void computeScalarProduct(Map<String, List<DocInfo>> invertedIndex,
+    private static void computeScalarProduct(Map<String, Map<String, DocInfo>> invertedIndex,
                                              Map<String, DocInfo> indexedQuery, Map<String, Double> scores) {
 
         DocInfo currentDocInfoQuery;
-        List<DocInfo> currentDocList;
+        Map<String, DocInfo> currentDocList;
 
         for (Map.Entry<String, DocInfo> currentEntryQuery : indexedQuery.entrySet()) {
             currentDocInfoQuery = currentEntryQuery.getValue();
             currentDocList = invertedIndex.get(currentEntryQuery.getKey());
 
-            for (DocInfo currentDoc : currentDocList) {
+            for (DocInfo currentDoc : currentDocList.values()) {
                 computePartOfScalarProduct(currentDocInfoQuery, currentDoc, scores);
             }
 
@@ -63,7 +62,7 @@ public class ScoreCounter {
         return docInfo1.getTfidf() * docInfo2.getTfidf();
     }
 
-    private static void normalizeScores(Map<String, List<DocInfo>> invertedIndex,
+    private static void normalizeScores(Map<String, Map<String, DocInfo>> invertedIndex,
                                         Map<String, DocInfo> indexedQuery, Map<String, Double> scores) {
 
         double queryNorm = getQueryNorm(indexedQuery);
@@ -95,16 +94,15 @@ public class ScoreCounter {
         return Math.sqrt(sum);
     }
 
-    private static double getDocNorm(Map<String, List<DocInfo>> invertedIndex, String docId) {
+    private static double getDocNorm(Map<String, Map<String, DocInfo>> invertedIndex, String docId) {
         double sum = 0.0;
 
-        for (List<DocInfo> currentDocList : invertedIndex.values()) {
-            for (DocInfo currentDoc : currentDocList) {
+        for (Map<String, DocInfo> currentDocMap : invertedIndex.values()) {
 
-                if (currentDoc.getDocumentId().equals(docId)) {
-                    sum += Math.pow(currentDoc.getTfidf(), 2.0);
-                }
+            DocInfo currentDoc = currentDocMap.get(docId);
 
+            if (currentDoc != null) {
+                sum += Math.pow(currentDoc.getTfidf(), 2.0);
             }
         }
 

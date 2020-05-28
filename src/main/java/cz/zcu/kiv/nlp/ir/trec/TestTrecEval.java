@@ -74,6 +74,9 @@ public class TestTrecEval {
         }
         log.info("Documents: " + documents.size());
 
+        index.index(documents);
+
+        log.info("Documents indexed.");
 
         List<String> lines = new ArrayList<String>();
 

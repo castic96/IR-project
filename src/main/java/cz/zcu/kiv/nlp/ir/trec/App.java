@@ -40,7 +40,7 @@ public class App {
         // Example 2
         printTextExample2();
         documents = addDocumentsExample2();
-        query1 = "tropical fish sea";
+        query1 = "NOT (tropical AND include)";
         query2 = "tropical fish";
         topResults = 5;
 
@@ -48,10 +48,10 @@ public class App {
 
         index.index(documents);
 
-        results = index.search(query1);
+        results = index.search(query1, SearchType.BOOLEAN);
         printResults(results, query1, topResults);
 
-        results = index.search(query2);
+        results = index.search(query2, SearchType.BOOLEAN);
         printResults(results, query2, topResults);
 
 

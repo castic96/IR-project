@@ -1,5 +1,7 @@
 package cz.zcu.kiv.nlp.ir.trec.data;
 
+import java.util.Objects;
+
 public class DocInfo {
 
     String documentId;
@@ -35,5 +37,20 @@ public class DocInfo {
     public int documentIdHash() {
         if (documentId == null)  { return 0; }
         else { return documentId.hashCode(); }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DocInfo docInfo = (DocInfo) o;
+
+        return Objects.equals(documentId, docInfo.documentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return documentId != null ? documentId.hashCode() : 0;
     }
 }

@@ -40,7 +40,7 @@ public class App {
         // Example 2
         printTextExample2();
         documents = addDocumentsExample2();
-        query1 = "NOT (tropical AND include)";
+        query1 = "NOT (include OR country)";
         query2 = "tropical fish";
         topResults = 5;
 

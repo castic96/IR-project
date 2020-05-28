@@ -320,8 +320,8 @@ public class Index implements Indexer, Searcher, Serializable {
     private List<DocInfo> isEmpty(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
 
         if (docInfoList1.isEmpty() && docInfoList2.isEmpty()) return new ArrayList<>();
-        else if (docInfoList1.isEmpty()) return new ArrayList<>(docInfoList2);
-        else if (docInfoList2.isEmpty()) return new ArrayList<>(docInfoList1);
+        else if (docInfoList1.isEmpty()) return docInfoList2;
+        else if (docInfoList2.isEmpty()) return docInfoList1;
 
         return null;
     }

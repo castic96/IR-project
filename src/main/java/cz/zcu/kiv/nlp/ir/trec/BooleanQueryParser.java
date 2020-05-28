@@ -28,7 +28,7 @@ public class BooleanQueryParser {
 
             buildBooleanQueryTree(queryLucene, root);
 
-            checkTreeConsistence(query, root);
+            //checkTreeConsistence(query, root);
 
         } catch(QueryNodeException e) {
             e.printStackTrace();

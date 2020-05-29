@@ -1,4 +1,6 @@
-package cz.zcu.kiv.nlp.ir.trec.data;
+package cz.zcu.kiv.nlp.ir.trec.data.utils;
+
+import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
 
 import java.io.Serializable;
 import java.util.Comparator;

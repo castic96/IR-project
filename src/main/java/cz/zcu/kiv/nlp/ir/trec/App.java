@@ -4,6 +4,8 @@ import cz.zcu.kiv.nlp.ir.trec.data.Document;
 import cz.zcu.kiv.nlp.ir.trec.data.DocumentNew;
 import cz.zcu.kiv.nlp.ir.trec.data.Record;
 import cz.zcu.kiv.nlp.ir.trec.data.Result;
+import cz.zcu.kiv.nlp.ir.trec.search.SearchType;
+import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +42,7 @@ public class App {
         // Example 2
         printTextExample2();
         documents = addDocumentsExample2();
-        query1 = "NOT (tropical AND country)";
+        query1 = "tropical fish sea";
         query2 = "tropical fish";
         topResults = 5;
 
@@ -48,7 +50,7 @@ public class App {
 
         index.index(documents);
 
-        results = index.search(query1, SearchType.BOOLEAN);
+        results = index.search(query1, SearchType.NORMAL);
         printResults(results, query1, topResults);
 
         results = index.search(query2, SearchType.NORMAL);

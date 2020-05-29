@@ -2,6 +2,8 @@ package cz.zcu.kiv.nlp.ir.trec;
 import cz.zcu.kiv.nlp.ir.trec.data.Document;
 import cz.zcu.kiv.nlp.ir.trec.data.Result;
 import cz.zcu.kiv.nlp.ir.trec.data.Topic;
+import cz.zcu.kiv.nlp.ir.trec.utils.IOUtils;
+import cz.zcu.kiv.nlp.ir.trec.utils.SerializedDataHelper;
 import org.apache.log4j.*;
 import java.io.*;
 import java.util.*;

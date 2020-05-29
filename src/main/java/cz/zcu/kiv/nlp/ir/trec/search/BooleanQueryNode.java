@@ -1,4 +1,4 @@
-package cz.zcu.kiv.nlp.ir.trec;
+package cz.zcu.kiv.nlp.ir.trec.search;
 
 import org.apache.lucene.search.BooleanClause;
 

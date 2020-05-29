@@ -1,4 +1,4 @@
-package cz.zcu.kiv.nlp.ir.trec;
+package cz.zcu.kiv.nlp.ir.trec.utils;
 
 import cz.zcu.kiv.nlp.ir.trec.data.Document;
 import cz.zcu.kiv.nlp.ir.trec.data.Topic;
@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class SerializedDataHelper {
 
-    static Logger log = Logger.getLogger(SerializedDataHelper.class);
-    static final java.text.DateFormat SDF = new SimpleDateFormat("yyyy-MM-dd_HH_mm_SS");
+    public static Logger log = Logger.getLogger(SerializedDataHelper.class);
+    public static final java.text.DateFormat SDF = new SimpleDateFormat("yyyy-MM-dd_HH_mm_SS");
 
     static public List<Document> loadDocument(File serializedFile) {
         final Object object;

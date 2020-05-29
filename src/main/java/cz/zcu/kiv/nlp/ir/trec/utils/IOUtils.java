@@ -1,4 +1,4 @@
-package cz.zcu.kiv.nlp.ir.trec;
+package cz.zcu.kiv.nlp.ir.trec.utils;
 
 import java.io.*;
 import java.util.ArrayList;

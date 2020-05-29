@@ -1,12 +1,15 @@
 package cz.zcu.kiv.nlp.ir.trec;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.precedence.PrecedenceQueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
+import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +18,8 @@ public class BooleanQueryParser {
     //zde dat preprocessor
 
     private PrecedenceQueryParser parser;
+
+    private static Logger log = Logger.getLogger(BooleanQueryParser.class);
 
     public BooleanQueryParser() {
         this.parser = new PrecedenceQueryParser();
@@ -42,7 +47,11 @@ public class BooleanQueryParser {
         BooleanQuery booleanQuery = (BooleanQuery) query;
         BooleanQueryNode newChild;
 
-        for (BooleanClause currentClause : booleanQuery.clauses()) {
+        List<BooleanClause> clauses = booleanQuery.clauses();
+
+        for (BooleanClause currentClause : clauses) {
+            //log.debug("currentClause: " + currentClause.toString());
+
             newChild = new BooleanQueryNode();
 
             node.addDescendant(currentClause.getOccur(), newChild);

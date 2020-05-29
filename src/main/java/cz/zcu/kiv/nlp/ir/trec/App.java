@@ -40,7 +40,7 @@ public class App {
         // Example 2
         printTextExample2();
         documents = addDocumentsExample2();
-        query1 = "NOT tropical OR country";
+        query1 = "NOT (tropical AND country)";
         query2 = "tropical fish";
         topResults = 5;
 
@@ -51,7 +51,7 @@ public class App {
         results = index.search(query1, SearchType.BOOLEAN);
         printResults(results, query1, topResults);
 
-        results = index.search(query2, SearchType.BOOLEAN);
+        results = index.search(query2, SearchType.NORMAL);
         printResults(results, query2, topResults);
 
 

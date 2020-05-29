@@ -53,4 +53,9 @@ public class DocInfo {
     public int hashCode() {
         return documentId != null ? documentId.hashCode() : 0;
     }
+
+    @Override
+    public String toString() {
+        return documentId;
+    }
 }

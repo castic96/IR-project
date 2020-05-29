@@ -264,7 +264,6 @@ public class Index implements Indexer, Searcher, Serializable {
     }
 
     private List<DocInfo> executeOr(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
-
         List<DocInfo> results = isEmpty(docInfoList1, docInfoList2);
 
         if (results != null) {
@@ -412,8 +411,8 @@ public class Index implements Indexer, Searcher, Serializable {
             }
 
             progress += progressStep;
-            if (progress > progLimit) {
-                log.info("Indexing progress: " + progLimit + " %.");
+            if (progress >= progLimit) {
+                log.info("Indexing progress: " + (int)progress + " %.");
                 progLimit += 10;
             }
 

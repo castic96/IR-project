@@ -2,3 +2,5 @@
 /.idea
 /target
 /*.iml
+/TREC
+/trec_eval.8.1

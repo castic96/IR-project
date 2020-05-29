@@ -66,8 +66,6 @@ public class Index implements Indexer, Searcher, Serializable {
 
         this.documents = new DocRepo(documents);
 
-        //setTerms(documents);
-
         this.invertedIndex = this.preprocessing.indexAllDocuments(documents);
 
         TfidfCounter.countIDF(idf, TfidfCounter.countDF(invertedIndex), documents.size());
@@ -174,62 +172,5 @@ public class Index implements Indexer, Searcher, Serializable {
         return results;
 
     }
-
-//    private void setTerms(List<Document> inputDocuments) {
-//        String[] wordsInDocument;
-//
-//        double progress = 0;
-//        double progressStep = inputDocuments.isEmpty() ? 100 : 100.0 / inputDocuments.size();
-//        int progLimit = 10;
-//
-//        for (Document currentDocument : inputDocuments) {
-//
-////            // Title
-////            wordsInDocument = currentDocument.getTitle().split("\\s+");
-////
-////            for (String word : wordsInDocument) {
-////                setWordToVocabulary(word, currentDocument.getId());
-////            }
-//
-//            // Text
-//            wordsInDocument = currentDocument.getText().split("\\s+");
-//
-//            for (String word : wordsInDocument) {
-//                setToDocIndex(word, currentDocument.getId());
-//            }
-//
-//            progress += progressStep;
-//            if (progress >= progLimit) {
-//                log.info("Indexing progress: " + (int)progress + " %.");
-//                progLimit += 10;
-//            }
-//
-//        }
-//
-//    }
-
-//    private void setToDocIndex(String word, String id) {
-//        Map<String, DocInfo> docsWithCurrentWord;
-//
-//        if (invertedIndex.containsKey(word)) {
-//            docsWithCurrentWord = invertedIndex.get(word);
-//
-//            DocInfo currentDoc = docsWithCurrentWord.get(id);
-//
-//            if (currentDoc != null) {
-//                currentDoc.increaseCount();
-//            }
-//            else {
-//                docsWithCurrentWord.put(id, new DocInfo(id, 1));
-//            }
-//
-//        }
-//        else {
-//            docsWithCurrentWord = new HashMap<>();
-//            docsWithCurrentWord.put(id, new DocInfo(id, 1));
-//            invertedIndex.put(word, docsWithCurrentWord);
-//        }
-//
-//    }
 
 }

@@ -1,7 +1,6 @@
 package cz.zcu.kiv.nlp.ir.trec.search;
 
 import cz.zcu.kiv.nlp.ir.trec.preprocessing.Preprocessing;
-import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.precedence.PrecedenceQueryParser;
 import org.apache.lucene.search.BooleanClause;
@@ -10,15 +9,12 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 
 import java.util.List;
-import java.util.Map;
 
 public class BooleanQueryParser {
 
     private Preprocessing preprocessing;
 
     private PrecedenceQueryParser parser;
-
-    private static Logger log = Logger.getLogger(BooleanQueryParser.class);
 
     public BooleanQueryParser(Preprocessing preprocessing) {
         this.preprocessing = preprocessing;
@@ -56,7 +52,6 @@ public class BooleanQueryParser {
         List<BooleanClause> clauses = booleanQuery.clauses();
 
         for (BooleanClause currentClause : clauses) {
-            //log.debug("currentClause: " + currentClause.toString());
 
             newChild = new BooleanQueryNode();
 
@@ -73,24 +68,5 @@ public class BooleanQueryParser {
         }
 
     }
-
-    private void checkTreeConsistence(String query, BooleanQueryNode node) {
-
-        if (!node.isTerm() && node.getDescendants().size() == 1) {
-            Map.Entry<BooleanClause.Occur, List<BooleanQueryNode>> currentEntry =
-                    node.getDescendants().entrySet().iterator().next();
-
-            BooleanClause.Occur occur = currentEntry.getKey();
-
-            if (occur.equals(BooleanClause.Occur.MUST_NOT) && currentEntry.getValue().size() < 2
-                    && currentEntry.getValue().get(0).isTerm()) {
-
-                throw new RuntimeException("Boolean operator NOT must not be alone!\nEntered query: " + query);
-
-            }
-        }
-
-    }
-
 
 }

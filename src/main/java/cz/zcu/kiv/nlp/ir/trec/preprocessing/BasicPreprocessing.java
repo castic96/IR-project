@@ -1,7 +1,6 @@
 package cz.zcu.kiv.nlp.ir.trec.preprocessing;
 
 
-import cz.zcu.kiv.nlp.ir.trec.Index;
 import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
 import cz.zcu.kiv.nlp.ir.trec.data.Document;
 import org.apache.log4j.Logger;
@@ -18,7 +17,6 @@ public class BasicPreprocessing implements Preprocessing {
      */
     private static Logger log = Logger.getLogger(BasicPreprocessing.class);
 
-    Map<String, Integer> wordFrequencies = new HashMap<String, Integer>();
     Stemmer stemmer;
     Tokenizer tokenizer;
     Set<String> stopwords;
@@ -74,12 +72,6 @@ public class BasicPreprocessing implements Preprocessing {
         for (Document currentDocument : documents) {
 
             indexDocument(currentDocument.getText(), currentDocument.getId(), invertedIndex);
-
-            //wordsInDocument = currentDocument.getText().split("\\s+");
-
-//            for (String word : wordsInDocument) {
-//                setToDocIndex(word, currentDocument.getId());
-//            }
 
             progress += progressStep;
             if (progress >= progLimit) {
@@ -181,39 +173,6 @@ public class BasicPreprocessing implements Preprocessing {
         }
     }
 
-
-
-//    @Override
-//    public void index(String document) {
-//        if (toLowercase) {
-//            document = document.toLowerCase();
-//        }
-//        if (removeAccentsBeforeStemming) {
-//            document = removeAccents(document);
-//        }
-//        if (containsCRLF) {
-//            document = removeCRLF(document);
-//        }
-//
-//        for (String token : tokenizer.tokenize(document)) {
-//
-//            if (stemmer != null) {
-//                token = stemmer.stem(token);
-//            }
-//            if (removeAccentsAfterStemming) {
-//                token = removeAccents(token);
-//            }
-//
-//            if (stopwords.contains(token)) continue;
-//
-//            if (!wordFrequencies.containsKey(token)) {
-//                wordFrequencies.put(token, 0);
-//            }
-//
-//            wordFrequencies.put(token, wordFrequencies.get(token) + 1);
-//        }
-//    }
-
     @Override
     public String getProcessedForm(String text) {
         if (toLowercase) {
@@ -242,7 +201,4 @@ public class BasicPreprocessing implements Preprocessing {
         return text;
     }
 
-//    public Map<String, Integer> getWordFrequencies() {
-//        return wordFrequencies;
-//    }
 }

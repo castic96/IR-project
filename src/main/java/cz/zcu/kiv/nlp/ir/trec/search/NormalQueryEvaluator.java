@@ -48,31 +48,6 @@ public class NormalQueryEvaluator {
         return resultsMap;
     }
 
-//    private void indexQuery(String query, Map<String, DocInfo> indexedQuery) {
-//        String[] wordsInQuery;
-//
-//        wordsInQuery = query.split("\\s+");
-//
-//        for (String word : wordsInQuery) {
-//            setToQueryIndex(word, indexedQuery);
-//        }
-//
-//    }
-
-//    private void setToQueryIndex(String word, Map<String, DocInfo> indexedQuery) {
-//
-//        if (invertedIndex.containsKey(word)) {
-//
-//            if (indexedQuery.containsKey(word)) {
-//                indexedQuery.get(word).increaseCount();
-//            }
-//            else {
-//                indexedQuery.put(word, new DocInfo("q", 1));
-//            }
-//
-//        }
-//    }
-
     private void countQueryTFIDF(Map<String, DocInfo> queryIndex) {
         DocInfo currentDoc;
         double currentIdf;

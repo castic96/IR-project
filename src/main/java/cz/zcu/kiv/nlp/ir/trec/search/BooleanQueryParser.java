@@ -1,5 +1,6 @@
 package cz.zcu.kiv.nlp.ir.trec.search;
 
+import cz.zcu.kiv.nlp.ir.trec.preprocessing.Preprocessing;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.precedence.PrecedenceQueryParser;
@@ -13,13 +14,14 @@ import java.util.Map;
 
 public class BooleanQueryParser {
 
-    //zde dat preprocessor
+    private Preprocessing preprocessing;
 
     private PrecedenceQueryParser parser;
 
     private static Logger log = Logger.getLogger(BooleanQueryParser.class);
 
-    public BooleanQueryParser() {
+    public BooleanQueryParser(Preprocessing preprocessing) {
+        this.preprocessing = preprocessing;
         this.parser = new PrecedenceQueryParser();
     }
 
@@ -42,6 +44,12 @@ public class BooleanQueryParser {
 
     private void buildBooleanQueryTree(Query query, BooleanQueryNode node) {
 
+        if (query instanceof TermQuery) {
+            node.setTerm(true);
+            node.setQueryStr(((TermQuery)query).getTerm().text());
+            return;
+        }
+
         BooleanQuery booleanQuery = (BooleanQuery) query;
         BooleanQueryNode newChild;
 
@@ -59,7 +67,7 @@ public class BooleanQueryParser {
                 buildBooleanQueryTree(currentClause.getQuery(), newChild);
             }
             else if (currentClause.getQuery().getClass() == TermQuery.class) {
-                newChild.setQueryStr(currentClause.getQuery().toString()); // TODO: spustit zde preprocesor
+                newChild.setQueryStr(preprocessing.getProcessedForm(currentClause.getQuery().toString()));
                 newChild.setTerm(true);
             }
         }

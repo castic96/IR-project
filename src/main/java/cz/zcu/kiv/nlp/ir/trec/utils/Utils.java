@@ -6,10 +6,12 @@ import cz.zcu.kiv.nlp.ir.trec.data.Record;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 
 public class Utils {
@@ -95,5 +97,17 @@ public class Utils {
         }
 
         return records;
+    }
+
+    public static Set<String> loadStopWords(String file) {
+        Set<String> stopWords = new HashSet<>();
+
+        try (Stream<String> stream = Files.lines(Paths.get(file), StandardCharsets.UTF_8)) {
+            stream.forEach(stopWords::add);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return stopWords;
     }
 }

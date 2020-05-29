@@ -3,11 +3,14 @@ package cz.zcu.kiv.nlp.ir.trec.search;
 import cz.zcu.kiv.nlp.ir.trec.counter.ScoreCounter;
 import cz.zcu.kiv.nlp.ir.trec.counter.TfidfCounter;
 import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
+import cz.zcu.kiv.nlp.ir.trec.preprocessing.Preprocessing;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class NormalQueryEvaluator {
+
+    private Preprocessing preprocessing;
 
     /**
      * Invertovaný index. Mapa(term -> Mapa (id dokumentu -> DocInfo)).
@@ -25,8 +28,9 @@ public class NormalQueryEvaluator {
      */
     private Map<String, Double> docVectorNorms;
 
-    public NormalQueryEvaluator(Map<String, Map<String, DocInfo>> invertedIndex, Map<String, Double> idf,
+    public NormalQueryEvaluator(Preprocessing preprocessing, Map<String, Map<String, DocInfo>> invertedIndex, Map<String, Double> idf,
                                 Map<String, Double> docVectorNorms) {
+        this.preprocessing = preprocessing;
         this.invertedIndex = invertedIndex;
         this.idf = idf;
         this.docVectorNorms = docVectorNorms;
@@ -35,7 +39,7 @@ public class NormalQueryEvaluator {
     public Map<String, Double> evaluateNormalQuery(String query) {
         Map<String, DocInfo> indexedQuery = new HashMap<>();
 
-        indexQuery(query, indexedQuery);
+        this.preprocessing.indexQuery(query, indexedQuery, invertedIndex);
 
         countQueryTFIDF(indexedQuery);
 
@@ -44,30 +48,30 @@ public class NormalQueryEvaluator {
         return resultsMap;
     }
 
-    private void indexQuery(String query, Map<String, DocInfo> indexedQuery) {
-        String[] wordsInQuery;
+//    private void indexQuery(String query, Map<String, DocInfo> indexedQuery) {
+//        String[] wordsInQuery;
+//
+//        wordsInQuery = query.split("\\s+");
+//
+//        for (String word : wordsInQuery) {
+//            setToQueryIndex(word, indexedQuery);
+//        }
+//
+//    }
 
-        wordsInQuery = query.split("\\s+");
-
-        for (String word : wordsInQuery) {
-            setToQueryIndex(word, indexedQuery);
-        }
-
-    }
-
-    private void setToQueryIndex(String word, Map<String, DocInfo> indexedQuery) {
-
-        if (invertedIndex.containsKey(word)) {
-
-            if (indexedQuery.containsKey(word)) {
-                indexedQuery.get(word).increaseCount();
-            }
-            else {
-                indexedQuery.put(word, new DocInfo("q", 1));
-            }
-
-        }
-    }
+//    private void setToQueryIndex(String word, Map<String, DocInfo> indexedQuery) {
+//
+//        if (invertedIndex.containsKey(word)) {
+//
+//            if (indexedQuery.containsKey(word)) {
+//                indexedQuery.get(word).increaseCount();
+//            }
+//            else {
+//                indexedQuery.put(word, new DocInfo("q", 1));
+//            }
+//
+//        }
+//    }
 
     private void countQueryTFIDF(Map<String, DocInfo> queryIndex) {
         DocInfo currentDoc;

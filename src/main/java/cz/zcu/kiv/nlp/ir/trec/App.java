@@ -42,7 +42,7 @@ public class App {
         // Example 2
         printTextExample2();
         documents = addDocumentsExample2();
-        query1 = "NOT tropical";
+        query1 = "NOT tropical OR country";
         query2 = "tropical fish";
         topResults = 5;
 

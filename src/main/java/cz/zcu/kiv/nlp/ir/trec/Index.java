@@ -29,8 +29,8 @@ public class Index implements Indexer, Searcher, Serializable {
     private Map<String, Map<String, DocInfo>> invertedIndex;
 
     /**
-     * Tato mapa obsahuje hodnoty 'idf' pro dokumenty, které mají nenulové 'idf'.
-     * Mapa (id dokumentu -> idf).
+     * Tato mapa obsahuje hodnoty 'idf' pro termy, které mají nenulové 'idf'.
+     * Mapa (term -> idf).
      */
     private Map<String, Double> idf;
     /**

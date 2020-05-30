@@ -88,7 +88,7 @@ public class TestTrecEval {
             //to ovlivní výsledné vyhledávání - zkuste změnit a uvidíte jaký MAP (Mean Average Precision) dostanete pro jednotlivé
             //kombinace např. pokud budete vyhledávat jen pomocí title (t.getTitle()) nebo jen pomocí description (t.getDescription())
             //nebo jejich kombinací (t.getTitle() + " " + t.getDescription())
-            List<Result> resultHits = index.search(t.getTitle());
+            List<Result> resultHits = index.search(t.getTitle() + " " + t.getDescription() + " " + t.getNarrative());
             log.info("Count of hits: " + resultHits.size());
 
             Comparator<Result> cmp = new Comparator<Result>() {

@@ -2,10 +2,7 @@ package cz.zcu.kiv.nlp.ir.trec;
 
 import cz.zcu.kiv.nlp.ir.trec.counter.TfidfCounter;
 import cz.zcu.kiv.nlp.ir.trec.data.*;
-import cz.zcu.kiv.nlp.ir.trec.preprocessing.AdvancedTokenizer;
-import cz.zcu.kiv.nlp.ir.trec.preprocessing.BasicPreprocessing;
-import cz.zcu.kiv.nlp.ir.trec.preprocessing.CzechStemmerAgressive;
-import cz.zcu.kiv.nlp.ir.trec.preprocessing.Preprocessing;
+import cz.zcu.kiv.nlp.ir.trec.preprocessing.*;
 import cz.zcu.kiv.nlp.ir.trec.search.*;
 import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
 import org.apache.log4j.Logger;
@@ -32,8 +29,8 @@ public class Index implements Indexer, Searcher, Serializable {
     private Map<String, Map<String, DocInfo>> invertedIndex;
 
     /**
-     * Tato mapa obsahuje hodnoty 'idf' pro dokumenty, které mají nenulové 'idf'.
-     * Mapa (id dokumentu -> idf).
+     * Tato mapa obsahuje hodnoty 'idf' pro termy, které mají nenulové 'idf'.
+     * Mapa (term -> idf).
      */
     private Map<String, Double> idf;
     /**
@@ -52,7 +49,7 @@ public class Index implements Indexer, Searcher, Serializable {
     public Index() {
         this.invertedIndex = new HashMap<>();
         this.idf = new HashMap<>();
-        this.preprocessing = new BasicPreprocessing(new CzechStemmerAgressive(), new AdvancedTokenizer(),
+        this.preprocessing = new BasicPreprocessing(new CzechStemmerLight(), new AdvancedTokenizer(),
                 Utils.loadStopWords("stopwords.txt"), false, true, true);
 
     }
@@ -66,9 +63,9 @@ public class Index implements Indexer, Searcher, Serializable {
 
         this.documents = new DocRepo(documents);
 
-        //setTerms(documents);
+        setTerms(documents);
 
-        this.invertedIndex = this.preprocessing.indexAllDocuments(documents);
+        //this.invertedIndex = this.preprocessing.indexAllDocuments(documents);
 
         TfidfCounter.countIDF(idf, TfidfCounter.countDF(invertedIndex), documents.size());
 
@@ -175,61 +172,61 @@ public class Index implements Indexer, Searcher, Serializable {
 
     }
 
-//    private void setTerms(List<Document> inputDocuments) {
-//        String[] wordsInDocument;
-//
-//        double progress = 0;
-//        double progressStep = inputDocuments.isEmpty() ? 100 : 100.0 / inputDocuments.size();
-//        int progLimit = 10;
-//
-//        for (Document currentDocument : inputDocuments) {
-//
-////            // Title
-////            wordsInDocument = currentDocument.getTitle().split("\\s+");
-////
-////            for (String word : wordsInDocument) {
-////                setWordToVocabulary(word, currentDocument.getId());
-////            }
-//
-//            // Text
-//            wordsInDocument = currentDocument.getText().split("\\s+");
+    private void setTerms(List<Document> inputDocuments) {
+        String[] wordsInDocument;
+
+        double progress = 0;
+        double progressStep = inputDocuments.isEmpty() ? 100 : 100.0 / inputDocuments.size();
+        int progLimit = 10;
+
+        for (Document currentDocument : inputDocuments) {
+
+//            // Title
+//            wordsInDocument = currentDocument.getTitle().split("\\s+");
 //
 //            for (String word : wordsInDocument) {
-//                setToDocIndex(word, currentDocument.getId());
+//                setWordToVocabulary(word, currentDocument.getId());
 //            }
-//
-//            progress += progressStep;
-//            if (progress >= progLimit) {
-//                log.info("Indexing progress: " + (int)progress + " %.");
-//                progLimit += 10;
-//            }
-//
-//        }
-//
-//    }
 
-//    private void setToDocIndex(String word, String id) {
-//        Map<String, DocInfo> docsWithCurrentWord;
-//
-//        if (invertedIndex.containsKey(word)) {
-//            docsWithCurrentWord = invertedIndex.get(word);
-//
-//            DocInfo currentDoc = docsWithCurrentWord.get(id);
-//
-//            if (currentDoc != null) {
-//                currentDoc.increaseCount();
-//            }
-//            else {
-//                docsWithCurrentWord.put(id, new DocInfo(id, 1));
-//            }
-//
-//        }
-//        else {
-//            docsWithCurrentWord = new HashMap<>();
-//            docsWithCurrentWord.put(id, new DocInfo(id, 1));
-//            invertedIndex.put(word, docsWithCurrentWord);
-//        }
-//
-//    }
+            // Text
+           // wordsInDocument = currentDocument.getText().split("\\s+");
+
+            for (String word : this.preprocessing.index(currentDocument.getText())) {
+                setToDocIndex(word, currentDocument.getId());
+            }
+
+            progress += progressStep;
+            if (progress >= progLimit) {
+                log.info("Indexing progress: " + (int)progress + " %.");
+                progLimit += 10;
+            }
+
+        }
+
+    }
+
+    private void setToDocIndex(String word, String id) {
+        Map<String, DocInfo> docsWithCurrentWord;
+
+        if (invertedIndex.containsKey(word)) {
+            docsWithCurrentWord = invertedIndex.get(word);
+
+            DocInfo currentDoc = docsWithCurrentWord.get(id);
+
+            if (currentDoc != null) {
+                currentDoc.increaseCount();
+            }
+            else {
+                docsWithCurrentWord.put(id, new DocInfo(id, 1));
+            }
+
+        }
+        else {
+            docsWithCurrentWord = new HashMap<>();
+            docsWithCurrentWord.put(id, new DocInfo(id, 1));
+            invertedIndex.put(word, docsWithCurrentWord);
+        }
+
+    }
 
 }

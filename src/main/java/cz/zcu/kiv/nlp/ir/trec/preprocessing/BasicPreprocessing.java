@@ -1,7 +1,5 @@
 package cz.zcu.kiv.nlp.ir.trec.preprocessing;
 
-
-import cz.zcu.kiv.nlp.ir.trec.Index;
 import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
 import cz.zcu.kiv.nlp.ir.trec.data.Document;
 import org.apache.log4j.Logger;
@@ -26,10 +24,11 @@ public class BasicPreprocessing implements Preprocessing {
     boolean removeAccentsAfterStemming;
     boolean toLowercase;
     boolean containsCRLF;
+    boolean ignoreSingleCharacter;
 
     public BasicPreprocessing(Stemmer stemmer, Tokenizer tokenizer, Set<String> stopwords,
                               boolean removeAccentsBeforeStemming, boolean removeAccentsAfterStemming,
-                              boolean toLowercase, boolean containsCRLF) {
+                              boolean toLowercase, boolean containsCRLF, boolean ignoreSingleCharacter) {
         this.stemmer = stemmer;
         this.tokenizer = tokenizer;
         this.stopwords = stopwords;
@@ -37,30 +36,17 @@ public class BasicPreprocessing implements Preprocessing {
         this.removeAccentsAfterStemming = removeAccentsAfterStemming;
         this.toLowercase = toLowercase;
         this.containsCRLF = containsCRLF;
-
-        preprocessStopWords();
+        this.ignoreSingleCharacter = ignoreSingleCharacter;
     }
 
     public BasicPreprocessing(Stemmer stemmer, Tokenizer tokenizer, Set<String> stopwords,
                               boolean removeAccentsBeforeStemming, boolean removeAccentsAfterStemming,
                               boolean toLowercase) {
-        this(stemmer, tokenizer, stopwords, removeAccentsBeforeStemming, removeAccentsAfterStemming, toLowercase, false);
+        this(stemmer, tokenizer, stopwords, removeAccentsBeforeStemming, removeAccentsAfterStemming, toLowercase, false, true);
     }
 
     private String removeCRLF(String text) {
         return text.replace("\\n", " ");
-    }
-
-    private void preprocessStopWords() {
-        Set<String> preprocessedStopWords = new HashSet<String>();
-
-        if (stopwords != null) {
-            for (String word : stopwords) {
-                preprocessedStopWords.add(getProcessedForm(word));
-            }
-        }
-
-        stopwords = preprocessedStopWords;
     }
 
     @Override
@@ -105,14 +91,14 @@ public class BasicPreprocessing implements Preprocessing {
 
         for (String token : tokenizer.tokenize(document)) {
 
+            if (stopwords.contains(token)) continue;
+
             if (stemmer != null) {
                 token = stemmer.stem(token);
             }
             if (removeAccentsAfterStemming) {
                 token = removeAccents(token);
             }
-
-            if (stopwords.contains(token)) continue;
 
             setToDocIndex(token, id, invertedIndex);
         }
@@ -131,6 +117,8 @@ public class BasicPreprocessing implements Preprocessing {
 
         for (String token : tokenizer.tokenize(query)) {
 
+            if (stopwords.contains(token)) continue;
+
             if (stemmer != null) {
                 token = stemmer.stem(token);
             }
@@ -138,7 +126,13 @@ public class BasicPreprocessing implements Preprocessing {
                 token = removeAccents(token);
             }
 
-            if (stopwords.contains(token)) continue;
+            if (ignoreSingleCharacter)
+            {
+                if (token.length() <= 1)
+                {
+                    continue;
+                }
+            }
 
             setToQueryIndex(token, indexedQuery, invertedIndex);
         }
@@ -183,36 +177,44 @@ public class BasicPreprocessing implements Preprocessing {
 
 
 
-//    @Override
-//    public void index(String document) {
-//        if (toLowercase) {
-//            document = document.toLowerCase();
-//        }
-//        if (removeAccentsBeforeStemming) {
-//            document = removeAccents(document);
-//        }
-//        if (containsCRLF) {
-//            document = removeCRLF(document);
-//        }
-//
-//        for (String token : tokenizer.tokenize(document)) {
-//
-//            if (stemmer != null) {
-//                token = stemmer.stem(token);
-//            }
-//            if (removeAccentsAfterStemming) {
-//                token = removeAccents(token);
-//            }
-//
-//            if (stopwords.contains(token)) continue;
-//
-//            if (!wordFrequencies.containsKey(token)) {
-//                wordFrequencies.put(token, 0);
-//            }
-//
-//            wordFrequencies.put(token, wordFrequencies.get(token) + 1);
-//        }
-//    }
+    @Override
+    public List<String> index(String document) {
+        if (toLowercase) {
+            document = document.toLowerCase();
+        }
+        if (removeAccentsBeforeStemming) {
+            document = removeAccents(document);
+        }
+        if (containsCRLF) {
+            document = removeCRLF(document);
+        }
+
+        List<String> processedWords = new ArrayList<>();
+
+        for (String token : tokenizer.tokenize(document)) {
+
+            if (stopwords.contains(token)) continue;
+
+            if (stemmer != null) {
+                token = stemmer.stem(token);
+            }
+            if (removeAccentsAfterStemming) {
+                token = removeAccents(token);
+            }
+
+            if (ignoreSingleCharacter)
+            {
+                if (token.length() <= 1)
+                {
+                    continue;
+                }
+            }
+
+            processedWords.add(token);
+        }
+
+        return processedWords;
+    }
 
     @Override
     public String getProcessedForm(String text) {
@@ -242,7 +244,7 @@ public class BasicPreprocessing implements Preprocessing {
         return text;
     }
 
-//    public Map<String, Integer> getWordFrequencies() {
-//        return wordFrequencies;
-//    }
+    public Map<String, Integer> getWordFrequencies() {
+        return wordFrequencies;
+    }
 }

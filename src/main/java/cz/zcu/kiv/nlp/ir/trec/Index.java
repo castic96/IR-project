@@ -2,10 +2,7 @@ package cz.zcu.kiv.nlp.ir.trec;
 
 import cz.zcu.kiv.nlp.ir.trec.counter.TfidfCounter;
 import cz.zcu.kiv.nlp.ir.trec.data.*;
-import cz.zcu.kiv.nlp.ir.trec.preprocessing.AdvancedTokenizer;
-import cz.zcu.kiv.nlp.ir.trec.preprocessing.BasicPreprocessing;
-import cz.zcu.kiv.nlp.ir.trec.preprocessing.CzechStemmerAgressive;
-import cz.zcu.kiv.nlp.ir.trec.preprocessing.Preprocessing;
+import cz.zcu.kiv.nlp.ir.trec.preprocessing.*;
 import cz.zcu.kiv.nlp.ir.trec.search.*;
 import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
 import org.apache.log4j.Logger;
@@ -52,8 +49,8 @@ public class Index implements Indexer, Searcher, Serializable {
     public Index() {
         this.invertedIndex = new HashMap<>();
         this.idf = new HashMap<>();
-        this.preprocessing = new BasicPreprocessing(new CzechStemmerAgressive(), new AdvancedTokenizer(),
-                Utils.loadStopWords("stopwords.txt"), false, true, true);
+        this.preprocessing = new BasicPreprocessing(new CzechStemmerLight(), new AdvancedTokenizer(),
+                Utils.loadStopWords("stopwords.txt"), false, true, true, true);
 
     }
 

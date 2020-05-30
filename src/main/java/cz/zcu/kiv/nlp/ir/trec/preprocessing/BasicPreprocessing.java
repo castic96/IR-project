@@ -24,41 +24,29 @@ public class BasicPreprocessing implements Preprocessing {
     boolean removeAccentsAfterStemming;
     boolean toLowercase;
     boolean containsCRLF;
+    boolean ignoreSingleChar;
 
     public BasicPreprocessing(Stemmer stemmer, Tokenizer tokenizer, Set<String> stopwords,
                               boolean removeAccentsBeforeStemming, boolean removeAccentsAfterStemming,
-                              boolean toLowercase, boolean containsCRLF) {
+                              boolean toLowercase, boolean ignoreSingleChar, boolean containsCRLF) {
         this.stemmer = stemmer;
         this.tokenizer = tokenizer;
         this.stopwords = stopwords;
         this.removeAccentsBeforeStemming = removeAccentsBeforeStemming;
         this.removeAccentsAfterStemming = removeAccentsAfterStemming;
         this.toLowercase = toLowercase;
+        this.ignoreSingleChar = ignoreSingleChar;
         this.containsCRLF = containsCRLF;
-
-        preprocessStopWords();
     }
 
     public BasicPreprocessing(Stemmer stemmer, Tokenizer tokenizer, Set<String> stopwords,
                               boolean removeAccentsBeforeStemming, boolean removeAccentsAfterStemming,
-                              boolean toLowercase) {
-        this(stemmer, tokenizer, stopwords, removeAccentsBeforeStemming, removeAccentsAfterStemming, toLowercase, false);
+                              boolean toLowercase, boolean ignoreSingleChar) {
+        this(stemmer, tokenizer, stopwords, removeAccentsBeforeStemming, removeAccentsAfterStemming, toLowercase, true, false);
     }
 
     private String removeCRLF(String text) {
         return text.replace("\\n", " ");
-    }
-
-    private void preprocessStopWords() {
-        Set<String> preprocessedStopWords = new HashSet<String>();
-
-        if (stopwords != null) {
-            for (String word : stopwords) {
-                preprocessedStopWords.add(getProcessedForm(word));
-            }
-        }
-
-        stopwords = preprocessedStopWords;
     }
 
     @Override
@@ -97,6 +85,8 @@ public class BasicPreprocessing implements Preprocessing {
 
         for (String token : tokenizer.tokenize(document)) {
 
+            if (stopwords.contains(token)) continue;
+
             if (stemmer != null) {
                 token = stemmer.stem(token);
             }
@@ -104,7 +94,13 @@ public class BasicPreprocessing implements Preprocessing {
                 token = removeAccents(token);
             }
 
-            if (stopwords.contains(token)) continue;
+            if (ignoreSingleChar)
+            {
+                if (token.length() <= 1)
+                {
+                    continue;
+                }
+            }
 
             setToDocIndex(token, id, invertedIndex);
         }
@@ -123,6 +119,8 @@ public class BasicPreprocessing implements Preprocessing {
 
         for (String token : tokenizer.tokenize(query)) {
 
+            if (stopwords.contains(token)) continue;
+
             if (stemmer != null) {
                 token = stemmer.stem(token);
             }
@@ -130,7 +128,13 @@ public class BasicPreprocessing implements Preprocessing {
                 token = removeAccents(token);
             }
 
-            if (stopwords.contains(token)) continue;
+            if (ignoreSingleChar)
+            {
+                if (token.length() <= 1)
+                {
+                    continue;
+                }
+            }
 
             setToQueryIndex(token, indexedQuery, invertedIndex);
         }

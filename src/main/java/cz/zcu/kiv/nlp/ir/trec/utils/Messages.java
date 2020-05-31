@@ -31,10 +31,12 @@ public enum Messages {
     LESS_COUNT_OF_PARAMS("Less count of parameters than expected. Ignoring command...\n"),
     MORE_COUNT_OF_PARAMS("More count of parameters than expected. Ignoring superfluous parameters...\n"),
     FILE_ALREADY_EXISTS("File with the specified name already exists. The content will be overwritten.\n"),
-    SAVE_INDEX_SUCCEED("Index was saved successfully.\n"),
-    LOAD_INDEX_SUCCEED("Index was loaded successfully.\n"),
+    SAVE_INDEX_SUCCEED("Index has been saved successfully.\n"),
+    LOAD_INDEX_SUCCEED("Index has been loaded successfully.\n"),
     FILE_DOES_NOT_EXIST("File with the specified name does not exist. Ignoring the command...\n"),
-    SAVE_UNEXISTS_INDEX("Index does not exist. Ignoring the command...\n");
+    UNEXISTS_INDEX("Index does not exist. Ignoring the command...\n"),
+    DEFAULT_JSON_PATH("File path has not been entered. Using default path: "),
+    DOCS_INDEXED_SUCCEED("Documents has been indexed successfully.\n");
 
     private final String text;
 

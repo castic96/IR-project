@@ -88,7 +88,14 @@ public class Utils {
         List<Record> records = null;
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            File file = new File(fileName);
+
+            if (!file.isFile()) {
+                System.out.print(Messages.FILE_DOES_NOT_EXIST.getText());
+                return null;
+            }
+
+            BufferedReader br = new BufferedReader(new FileReader(file));
 
             Type recordListType = new TypeToken<ArrayList<Record>>(){}.getType();
 

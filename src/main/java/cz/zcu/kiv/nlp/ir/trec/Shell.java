@@ -1,18 +1,17 @@
 package cz.zcu.kiv.nlp.ir.trec;
 
-import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
-import cz.zcu.kiv.nlp.ir.trec.data.InvertedIndex;
+import cz.zcu.kiv.nlp.ir.trec.data.*;
 import cz.zcu.kiv.nlp.ir.trec.utils.Messages;
 import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
 import org.apache.lucene.util.fst.Util;
 
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Shell {
 
     private Index index;
     private Scanner sc = new Scanner(System.in);
+    private static final String DEFAULT_INPUT_DATA = "data/my_testing_data.json";
 
     public Shell(Index index) {
         this.index = index;
@@ -59,12 +58,50 @@ public class Shell {
                 case "save_index":
                     saveIndex(parameters);
                     break;
+                case "index_docs":
+                    indexDocs(parameters);
+                    break;
                 default:
                     System.out.print(Messages.UNKNOWN_COMMAND.getText());
 
             }
             System.out.print(Messages.PROMPT.getText());
         }
+    }
+
+    private void indexDocs(String[] parameters) {
+        String path;
+        List<Record> inputData;
+        List<Document> documents;
+
+        if (parameters.length > 1) {
+            System.out.print(Messages.MORE_COUNT_OF_PARAMS.getText());
+        }
+
+        if (index == null) {
+            System.out.print(Messages.UNEXISTS_INDEX.getText());
+            return;
+        }
+
+        if (parameters.length == 0) {
+            System.out.print(Messages.DEFAULT_JSON_PATH.getText() + DEFAULT_INPUT_DATA + "...\n");
+            path = DEFAULT_INPUT_DATA;
+        }
+        else {
+            path = parameters[0];
+        }
+
+        inputData = loadData(path);
+
+        if (inputData == null) {
+            return;
+        }
+
+        documents = convertDataIntoDocument(inputData);
+
+        index.index(documents);
+
+        System.out.print(Messages.DOCS_INDEXED_SUCCEED.getText());
     }
 
     private void saveIndex(String[] parameters) {
@@ -78,7 +115,7 @@ public class Shell {
         }
 
         if (index == null) {
-            System.out.print(Messages.SAVE_UNEXISTS_INDEX.getText());
+            System.out.print(Messages.UNEXISTS_INDEX.getText());
             return;
         }
 
@@ -141,6 +178,32 @@ public class Shell {
         }
 
         System.out.print(Messages.USAGE.getText());
+    }
+
+    private static List<Record> loadData(String fileName) {
+        return Utils.readRecordsFromJson(fileName);
+    }
+
+    private static List<Document> convertDataIntoDocument(List<Record> inputData) {
+
+        List<Document> documents = new ArrayList<>();
+        DocumentNew newDocument;
+        int i = 1;
+
+        for (Record currentRecord : inputData) {
+            newDocument = new DocumentNew();
+
+            newDocument.setText(currentRecord.getBody());
+            newDocument.setTitle(currentRecord.getTitle());
+            newDocument.setId(Integer.toString(i));
+            newDocument.setDate(new Date());
+
+            documents.add(newDocument);
+
+            i++;
+        }
+
+        return documents;
     }
 
     //TODO: jen pro test, pak smazat!

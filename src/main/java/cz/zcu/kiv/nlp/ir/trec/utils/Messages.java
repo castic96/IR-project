@@ -11,7 +11,7 @@ public enum Messages {
             "\tcreate_index\t- create a new index\n" +
             "\tload_index <index_name>\t- load the specified index\n" +
             "\tsave_index <index_name>\t- save the current loaded index and set name of it\n" +
-            "\tindex_docs <file_path>\t- index docs from JSON file specified by 'file_path' parameter\n" +
+            "\tindex_docs [file_path]\t- index docs from JSON file, optionally from 'file_path' file\n" +
             "\tdelete_doc <doc_id>\t- delete document with specified id\n" +
             "\tsearch_normal\t- search in indexed documents using NORMAL query (without clauses AND, OR, NOT)\n" +
             "\tsearch_boolean\t- search in indexed documents using BOOLEAN query (AND, OR, NOT)\n\n" +
@@ -36,7 +36,12 @@ public enum Messages {
     FILE_DOES_NOT_EXIST("File with the specified name does not exist. Ignoring the command...\n"),
     UNEXISTS_INDEX("Index does not exist. Ignoring the command...\n"),
     DEFAULT_JSON_PATH("File path has not been entered. Using default path: "),
-    DOCS_INDEXED_SUCCEED("Documents has been indexed successfully.\n");
+    DOCS_INDEXED_SUCCEED("Documents has been indexed successfully.\n"),
+    RESULTS_PRINT("Results for query: "),
+    TOP_RESULTS("Top: "),
+    SET_COUNT_OF_HITS("Enter count of top x results: "),
+    DEFAULT_TOP_HITS("Invalid count of top x results. Using default value top 10 results...\n"),
+    QUERY_PARSER_INVALID("Invalid syntax of boolean query. Ignoring the command...");
 
     private final String text;
 

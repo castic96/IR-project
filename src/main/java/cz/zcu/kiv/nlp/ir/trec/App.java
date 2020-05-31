@@ -11,24 +11,22 @@ import java.util.List;
 
 public class App {
 
-    static Index index;
-
     public static void main(String args[]) {
 
         initialization();
 
         // TEST
-        List<Document> documents;
-        String query1;
-        String query2;
-        List<Result> results;
-        int topResults;
-        query1= "dítě si poradí";
-        query2 = "vzdělání v podmínkách  příjemných pro život";
-        topResults = 8;
-
-//        List<Record> inputData = loadData(DEFAULT_INPUT_DATA);
-//        documents = convertDataIntoDocument(inputData);
+//        List<Document> documents;
+//        String query1;
+//        String query2;
+//        List<Result> results;
+//        int topResults;
+//        query1 = "fish AND NOT czechia";
+//        query2 = "tropical fish";
+//        topResults = 8;
+//
+//
+//        documents = addDocumentsExample2();
 //        index = new Index();
 //        index.index(documents);
         //END TEST
@@ -36,10 +34,10 @@ public class App {
         run();
 
         //TEST
-        results = index.search(query1);
-        printResults(results, query1, topResults);
-        results = index.search(query2);
-        printResults(results, query2, topResults);
+//        results = index.search(query1);
+//        printResults(results, query1, topResults);
+//        results = index.search(query2);
+//        printResults(results, query2, topResults);
         //END TEST
 
         exit();
@@ -115,13 +113,7 @@ public class App {
     }
 
     private static void run() {
-
-        Shell shell = new Shell(index);
-
-        shell.run();
-
-        index = shell.getIndex();
-
+        new Shell().run();
     }
 
     private static void exit() {

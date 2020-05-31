@@ -1,9 +1,9 @@
 package cz.zcu.kiv.nlp.ir.trec;
 
 import cz.zcu.kiv.nlp.ir.trec.data.*;
+import cz.zcu.kiv.nlp.ir.trec.search.SearchType;
 import cz.zcu.kiv.nlp.ir.trec.utils.Messages;
 import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
-import org.apache.lucene.util.fst.Util;
 
 import java.util.*;
 
@@ -12,10 +12,7 @@ public class Shell {
     private Index index;
     private Scanner sc = new Scanner(System.in);
     private static final String DEFAULT_INPUT_DATA = "data/my_testing_data.json";
-
-    public Shell(Index index) {
-        this.index = index;
-    }
+    private static final int DEFAULT_TOP_RESULTS = 10;
 
     public void run() {
         String input;
@@ -35,9 +32,9 @@ public class Shell {
                 continue;
             }
 
-            splittedInput = input.toLowerCase().split("\\s+");
+            splittedInput = input.split("\\s+");
 
-            command = splittedInput[0];
+            command = splittedInput[0].toLowerCase();
             parameters = new String[splittedInput.length - 1];
 
             System.arraycopy(splittedInput, 1, parameters, 0, parameters.length);
@@ -61,12 +58,68 @@ public class Shell {
                 case "index_docs":
                     indexDocs(parameters);
                     break;
+                case "search_normal":
+                    search(parameters, false);
+                    break;
+                case "search_boolean":
+                    search(parameters, true);
+                    break;
                 default:
                     System.out.print(Messages.UNKNOWN_COMMAND.getText());
 
             }
             System.out.print(Messages.PROMPT.getText());
         }
+    }
+
+    private void search(String[] parameters, boolean isBooleanSearch) {
+        List<Result> results;
+        StringBuilder query = new StringBuilder();
+        String queryStr;
+        int topResults;
+
+        if (parameters.length == 0) {
+            System.out.print(Messages.LESS_COUNT_OF_PARAMS.getText());
+            return;
+        }
+
+        for (int i = 0; i < parameters.length; i++) {
+
+            query.append(parameters[i]);
+
+            if (i < parameters.length - 1) {
+                query.append(" ");
+            }
+
+        }
+
+        queryStr = query.toString();
+
+        if (isBooleanSearch) {
+            results = index.search(queryStr, SearchType.BOOLEAN);
+        }
+        else {
+            results = index.search(queryStr, SearchType.NORMAL);
+        }
+
+        if (results == null) {
+            return;
+        }
+
+        System.out.print(Messages.SET_COUNT_OF_HITS.getText());
+
+        if (sc.hasNextInt()) {
+            topResults = sc.nextInt();
+        }
+        else {
+            System.out.print(Messages.DEFAULT_TOP_HITS.getText());
+            topResults = DEFAULT_TOP_RESULTS;
+        }
+
+        sc.nextLine();
+
+        printResults(results, queryStr, topResults);
+
     }
 
     private void indexDocs(String[] parameters) {
@@ -203,12 +256,26 @@ public class Shell {
         return documents;
     }
 
-    //TODO: jen pro test, pak smazat!
-    public void setIndex(Index index) {
-        this.index = index;
+    private void printResults(List<Result> results, String query, int top) {
+
+        Result result;
+
+        System.out.println(Messages.RESULTS_PRINT.getText() + "\"" + query + "\"");
+        System.out.println(Messages.TOP_RESULTS.getText() + top);
+
+        for (int i = 0; i < results.size(); i++) {
+            if(top == i) {
+                return;
+            }
+
+            result = results.get(i);
+
+            System.out.println(result.getRank() + ".\tDocument ID: " + result.getDocumentID() + "\tScore: " + result.getScore());
+            System.out.println("\tDocument title: " + index.getInvertedIndex().getDocuments().getDocumentById(result.getDocumentID()).getTitle());
+
+            System.out.println();
+
+        }
     }
 
-    public Index getIndex() {
-        return this.index;
-    }
 }

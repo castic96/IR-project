@@ -1,6 +1,8 @@
 package cz.zcu.kiv.nlp.ir.trec.search;
 
 import cz.zcu.kiv.nlp.ir.trec.preprocessing.Preprocessing;
+import cz.zcu.kiv.nlp.ir.trec.utils.Messages;
+import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.precedence.PrecedenceQueryParser;
 import org.apache.lucene.search.BooleanClause;
@@ -11,6 +13,8 @@ import org.apache.lucene.search.TermQuery;
 import java.util.List;
 
 public class BooleanQueryParser {
+
+    private static Logger log = Logger.getLogger(BooleanQueryParser.class);
 
     private Preprocessing preprocessing;
 
@@ -29,10 +33,9 @@ public class BooleanQueryParser {
 
             buildBooleanQueryTree(queryLucene, root);
 
-            //checkTreeConsistence(query, root);
-
         } catch(QueryNodeException e) {
-            e.printStackTrace();
+            log.error(Messages.QUERY_PARSER_INVALID.getText());
+            return null;
         }
 
         return root;

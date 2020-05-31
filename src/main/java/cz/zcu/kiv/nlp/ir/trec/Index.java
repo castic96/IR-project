@@ -112,6 +112,10 @@ public class Index implements Indexer, Searcher, Serializable {
 
         BooleanQueryNode root = new BooleanQueryParser(preprocessing).parseBooleanQuery(query);
 
+        if (root == null) {
+            return null;
+        }
+
         return evaluateBooleanQuery(root);
     }
 

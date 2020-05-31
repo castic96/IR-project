@@ -24,34 +24,16 @@ public class Index implements Indexer, Searcher, Serializable {
     private static Logger log = Logger.getLogger(Index.class);
 
     /**
-     * Invertovaný index. Mapa(term -> Mapa (id dokumentu -> DocInfo)).
+     * Invertovaný index.
      */
-    private Map<String, Map<String, DocInfo>> invertedIndex;
-
-    /**
-     * Tato mapa obsahuje hodnoty 'idf' pro termy, které mají nenulové 'idf'.
-     * Mapa (term -> idf).
-     */
-    private Map<String, Double> idf;
-    /**
-     * Tato mapa obsahuje normy vektorů jednotlivých dokumentů.
-     */
-    private Map<String, Double> docVectorNorms;
-
-    /**
-     * Repozitář dokumentů v daném indexu.
-     */
-    private DocRepo documents;
+    private InvertedIndex invertedIndex;
 
     private Preprocessing preprocessing;
 
 
     public Index() {
-        this.invertedIndex = new HashMap<>();
-        this.idf = new HashMap<>();
         this.preprocessing = new BasicPreprocessing(new CzechStemmerLight(), new AdvancedTokenizer(),
                 Utils.loadStopWords("stopwords.txt"), false, true, true, true);
-
     }
 
     /**
@@ -61,15 +43,24 @@ public class Index implements Indexer, Searcher, Serializable {
     @Override
     public void index(List<Document> documents) {
 
-        this.documents = new DocRepo(documents);
+        if (this.invertedIndex == null) {
+            this.invertedIndex = new InvertedIndex(documents);
 
-        this.invertedIndex = this.preprocessing.indexAllDocuments(documents);
+            this.invertedIndex.setInvertedIndexMap(this.preprocessing.indexAllDocuments(documents));
 
-        TfidfCounter.countIDF(idf, TfidfCounter.countDF(invertedIndex), documents.size());
+            TfidfCounter.countIDF(this.invertedIndex.getIdf(),
+                    TfidfCounter.countDF(this.invertedIndex.getInvertedIndexMap()), documents.size());
 
-        docVectorNorms = TfidfCounter.countDocTFIDF(invertedIndex, idf);
+            this.invertedIndex.setDocVectorNorms(
+                    TfidfCounter.countDocTFIDF(this.invertedIndex.getInvertedIndexMap(), this.invertedIndex.getIdf()));
 
-        log.info("Inverted Index size: " + invertedIndex.size());
+            log.info("Inverted Index size: " + this.invertedIndex.getInvertedIndexMap().size());
+        }
+        else {
+            //TODO
+        }
+
+
     }
 
     /**
@@ -107,7 +98,8 @@ public class Index implements Indexer, Searcher, Serializable {
 
     private List<Result> normalSearch(String query) {
 
-        NormalQueryEvaluator normalQueryEvaluator = new NormalQueryEvaluator(preprocessing, invertedIndex, idf, docVectorNorms);
+        NormalQueryEvaluator normalQueryEvaluator = new NormalQueryEvaluator(preprocessing,
+                invertedIndex.getInvertedIndexMap(), invertedIndex.getIdf(), invertedIndex.getDocVectorNorms());
 
         Map<String, Double> resultsMap = normalQueryEvaluator.evaluateNormalQuery(query);
 
@@ -123,7 +115,7 @@ public class Index implements Indexer, Searcher, Serializable {
 
     private List<Result> evaluateBooleanQuery(BooleanQueryNode root) {
 
-        BooleanQueryEvaluator booleanQueryEvaluator = new BooleanQueryEvaluator(invertedIndex);
+        BooleanQueryEvaluator booleanQueryEvaluator = new BooleanQueryEvaluator(invertedIndex.getInvertedIndexMap());
 
         List<DocInfo> resultsDocInfo = booleanQueryEvaluator.computeDocInfoResults(root, false);
 
@@ -170,4 +162,11 @@ public class Index implements Indexer, Searcher, Serializable {
 
     }
 
+    public InvertedIndex getInvertedIndex() {
+        return invertedIndex;
+    }
+
+    public void setInvertedIndex(InvertedIndex invertedIndex) {
+        this.invertedIndex = invertedIndex;
+    }
 }

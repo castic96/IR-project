@@ -2,6 +2,8 @@ package cz.zcu.kiv.nlp.ir.trec.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
+import cz.zcu.kiv.nlp.ir.trec.data.InvertedIndex;
 import cz.zcu.kiv.nlp.ir.trec.data.Record;
 
 import java.io.*;
@@ -109,5 +111,46 @@ public class Utils {
         }
 
         return stopWords;
+    }
+
+    public static void saveIndex(InvertedIndex index, String path) {
+        try {
+            File file = new File(path);
+
+            if (!file.createNewFile()) {
+                System.out.print(Messages.FILE_ALREADY_EXISTS.getText());
+            }
+
+            final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
+            objectOutputStream.writeObject(index);
+            objectOutputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static InvertedIndex loadIndex(String path) {
+        Object object = null;
+
+        try {
+            File file = new File(path);
+
+            if (!file.isFile()) {
+                System.out.print(Messages.FILE_DOES_NOT_EXIST.getText());
+                return null;
+            }
+
+            final ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
+
+            object = objectInputStream.readObject();
+
+            objectInputStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return (InvertedIndex) object;
     }
 }

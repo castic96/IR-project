@@ -1,8 +1,9 @@
 package cz.zcu.kiv.nlp.ir.trec.data;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class DocInfo {
+public class DocInfo implements Serializable {
 
     String documentId;
     int count;

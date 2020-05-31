@@ -4,81 +4,135 @@ import cz.zcu.kiv.nlp.ir.trec.data.Document;
 import cz.zcu.kiv.nlp.ir.trec.data.DocumentNew;
 import cz.zcu.kiv.nlp.ir.trec.data.Record;
 import cz.zcu.kiv.nlp.ir.trec.data.Result;
-import cz.zcu.kiv.nlp.ir.trec.search.SearchType;
+import cz.zcu.kiv.nlp.ir.trec.utils.Messages;
 import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 public class App {
 
-    private static final String INPUT_DATA_FILE_NAME = "data\\my_testing_data.json";
+    private static final String DEFAULT_INPUT_DATA = "data/my_testing_data.json";
+    static Index index;
 
     public static void main(String args[]) {
+
+        initialization();
+
+        // TEST
         List<Document> documents;
         String query1;
         String query2;
-        Index index;
         List<Result> results;
         int topResults;
-
-
-        // Example 1
-        printTextExample1();
-        documents = addDocumentsExample1();
-        query1 = "krásné město";
-        topResults = 3;
-
-        index = new Index();
-
-        index.index(documents);
-
-        results = index.search(query1);
-        printResults(results, query1, topResults);
-
-
-        // Example 2
-        printTextExample2();
-        documents = addDocumentsExample2();
-        query1 = "NOT tropical OR country";
-        query2 = "tropical fish";
-        topResults = 5;
-
-        index = new Index();
-
-        index.index(documents);
-
-        results = index.search(query1, SearchType.BOOLEAN);
-        printResults(results, query1, topResults);
-
-        results = index.search(query2, SearchType.NORMAL);
-        printResults(results, query2, topResults);
-
-
-        // Example 3
-        System.out.print("\n---------------------------------------------------------------------------------------------------------");
-        System.out.print("\nZadání:\n");
-        System.out.print("3) Spočtěte tf-idf váhy pro všechny dokumenty stažené v prvním cvičení: \n");
-        System.out.print("\nŘešení:\n");
-        List<Record> inputData = loadData(INPUT_DATA_FILE_NAME);
-        documents = convertDataIntoDocument(inputData);
         query1= "dítě si poradí";
         query2 = "vzdělání v podmínkách  příjemných pro život";
         topResults = 8;
 
-        index = new Index();
+//        List<Record> inputData = loadData(DEFAULT_INPUT_DATA);
+//        documents = convertDataIntoDocument(inputData);
+//        index = new Index();
+//        index.index(documents);
+        //END TEST
 
-        index.index(documents);
+        run();
 
+        //TEST
         results = index.search(query1);
         printResults(results, query1, topResults);
-
         results = index.search(query2);
         printResults(results, query2, topResults);
+        //END TEST
+
+        exit();
+
+
+
+//        List<Document> documents;
+//        String query1;
+//        String query2;
+//        Index index;
+//        List<Result> results;
+//        int topResults;
+//
+//
+//        // Example 1
+//        printTextExample1();
+//        documents = addDocumentsExample1();
+//        query1 = "krásné město";
+//        topResults = 3;
+//
+//        index = new Index();
+//
+//        index.index(documents);
+//
+//        results = index.search(query1);
+//        printResults(results, query1, topResults);
+//
+//
+//        // Example 2
+//        printTextExample2();
+//        documents = addDocumentsExample2();
+//        query1 = "fish AND NOT czechia";
+//        query2 = "tropical fish";
+//        topResults = 5;
+//
+//        index = new Index();
+//
+//        index.index(documents);
+//
+//        results = index.search(query1, SearchType.BOOLEAN);
+//        printResults(results, query1, topResults);
+//
+//        results = index.search(query2, SearchType.NORMAL);
+//        printResults(results, query2, topResults);
+//
+//
+//        // Example 3
+//        System.out.print("\n---------------------------------------------------------------------------------------------------------");
+//        System.out.print("\nZadání:\n");
+//        System.out.print("3) Spočtěte tf-idf váhy pro všechny dokumenty stažené v prvním cvičení: \n");
+//        System.out.print("\nŘešení:\n");
+//        List<Record> inputData = loadData(INPUT_DATA_FILE_NAME);
+//        documents = convertDataIntoDocument(inputData);
+//        query1= "dítě si poradí";
+//        query2 = "vzdělání v podmínkách  příjemných pro život";
+//        topResults = 8;
+//
+//        index = new Index();
+//
+//        index.index(documents);
+//
+//        results = index.search(query1);
+//        printResults(results, query1, topResults);
+//
+//        results = index.search(query2);
+//        printResults(results, query2, topResults);
 
     }
+
+    private static void initialization() {
+        System.out.print(Messages.HEADER.getText());
+        System.out.print(Messages.USAGE.getText());
+    }
+
+    private static void run() {
+
+        Shell shell = new Shell(index);
+
+        shell.run();
+
+        index = shell.getIndex();
+
+    }
+
+    private static void exit() {
+        System.out.print(Messages.EXIT.getText());
+        System.exit(0);
+    }
+
+
 
     private static List<Document> convertDataIntoDocument(List<Record> inputData) {
 

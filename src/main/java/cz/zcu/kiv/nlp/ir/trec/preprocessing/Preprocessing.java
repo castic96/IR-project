@@ -15,6 +15,8 @@ public interface Preprocessing {
 
     Map<String, Map<String, DocInfo>> indexAllDocuments(List<Document> documents);
 
+    Map<String, Map<String, DocInfo>> indexAllDocuments(List<Document> documents, Map<String, Map<String, DocInfo>> invertedIndex);
+
     void indexDocument(String document, String id, Map<String, Map<String, DocInfo>> invertedIndex);
 
     void indexQuery(String query, Map<String, DocInfo> indexedQuery, Map<String, Map<String, DocInfo>> invertedIndex);

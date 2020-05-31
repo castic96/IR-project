@@ -184,23 +184,20 @@ public class Shell {
         return Utils.readRecordsFromJson(fileName);
     }
 
-    private static List<Document> convertDataIntoDocument(List<Record> inputData) {
+    private List<Document> convertDataIntoDocument(List<Record> inputData) {
 
         List<Document> documents = new ArrayList<>();
         DocumentNew newDocument;
-        int i = 1;
 
         for (Record currentRecord : inputData) {
             newDocument = new DocumentNew();
 
             newDocument.setText(currentRecord.getBody());
             newDocument.setTitle(currentRecord.getTitle());
-            newDocument.setId(Integer.toString(i));
+            newDocument.setId(index.getInvertedIndex().getDocuments().getUniqueId());
             newDocument.setDate(new Date());
 
             documents.add(newDocument);
-
-            i++;
         }
 
         return documents;

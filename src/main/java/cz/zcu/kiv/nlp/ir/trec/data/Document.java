@@ -39,4 +39,6 @@ public interface Document {
      */
     Date getDate();
 
+    void setId(String id);
+
 }

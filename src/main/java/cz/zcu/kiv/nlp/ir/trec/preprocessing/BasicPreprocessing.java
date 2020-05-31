@@ -50,8 +50,8 @@ public class BasicPreprocessing implements Preprocessing {
     }
 
     @Override
-    public Map<String, Map<String, DocInfo>> indexAllDocuments(List<Document> documents) {
-        Map<String, Map<String, DocInfo>> invertedIndex = new HashMap<>();
+    public Map<String, Map<String, DocInfo>> indexAllDocuments(List<Document> documents,
+                                                               Map<String, Map<String, DocInfo>> invertedIndex) {
 
         double progress = 0;
         double progressStep = documents.isEmpty() ? 100 : 100.0 / documents.size();
@@ -70,6 +70,11 @@ public class BasicPreprocessing implements Preprocessing {
         }
 
         return invertedIndex;
+    }
+
+    @Override
+    public Map<String, Map<String, DocInfo>> indexAllDocuments(List<Document> documents) {
+        return indexAllDocuments(documents, new HashMap<>());
     }
 
     public void indexDocument(String document, String id, Map<String, Map<String, DocInfo>> invertedIndex) {

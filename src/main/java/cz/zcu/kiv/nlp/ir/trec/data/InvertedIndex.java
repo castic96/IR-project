@@ -28,9 +28,9 @@ public class InvertedIndex implements Serializable {
      */
     private DocRepo documents;
 
-    public InvertedIndex(List<Document> documents) {
+    public InvertedIndex() {
         this.idf = new HashMap<>();
-        this.documents = new DocRepo(documents);
+        this.documents = new DocRepo();
     }
 
     public void setInvertedIndexMap(Map<String, Map<String, DocInfo>> invertedIndexMap) {
@@ -51,5 +51,13 @@ public class InvertedIndex implements Serializable {
 
     public Map<String, Double> getDocVectorNorms() {
         return docVectorNorms;
+    }
+
+    public DocRepo getDocuments() {
+        return documents;
+    }
+
+    public void addDocuments(List<Document> documents) {
+        this.documents.addDocumentList(documents);
     }
 }

@@ -34,6 +34,7 @@ public class Index implements Indexer, Searcher, Serializable {
     public Index() {
         this.preprocessing = new BasicPreprocessing(new CzechStemmerLight(), new AdvancedTokenizer(),
                 Utils.loadStopWords("stopwords.txt"), false, true, true, true);
+        this.invertedIndex = new InvertedIndex();
     }
 
     /**
@@ -43,23 +44,24 @@ public class Index implements Indexer, Searcher, Serializable {
     @Override
     public void index(List<Document> documents) {
 
-        if (this.invertedIndex == null) {
-            this.invertedIndex = new InvertedIndex(documents);
-
+        if (this.invertedIndex.getInvertedIndexMap() == null) {
             this.invertedIndex.setInvertedIndexMap(this.preprocessing.indexAllDocuments(documents));
-
-            TfidfCounter.countIDF(this.invertedIndex.getIdf(),
-                    TfidfCounter.countDF(this.invertedIndex.getInvertedIndexMap()), documents.size());
-
-            this.invertedIndex.setDocVectorNorms(
-                    TfidfCounter.countDocTFIDF(this.invertedIndex.getInvertedIndexMap(), this.invertedIndex.getIdf()));
-
-            log.info("Inverted Index size: " + this.invertedIndex.getInvertedIndexMap().size());
         }
         else {
-            //TODO
+            this.invertedIndex.setInvertedIndexMap(this.preprocessing.indexAllDocuments(
+                    documents, this.invertedIndex.getInvertedIndexMap()));
         }
 
+        this.invertedIndex.addDocuments(documents);
+
+        TfidfCounter.countIDF(this.invertedIndex.getIdf(),
+                TfidfCounter.countDF(this.invertedIndex.getInvertedIndexMap()),
+                this.invertedIndex.getDocuments().getCountOfDocuments());
+
+        this.invertedIndex.setDocVectorNorms(
+                TfidfCounter.countDocTFIDF(this.invertedIndex.getInvertedIndexMap(), this.invertedIndex.getIdf()));
+
+        log.info("Inverted Index size: " + this.invertedIndex.getInvertedIndexMap().size());
 
     }
 

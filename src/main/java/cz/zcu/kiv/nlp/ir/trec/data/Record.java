@@ -3,21 +3,69 @@ package cz.zcu.kiv.nlp.ir.trec.data;
 import java.io.*;
 import java.util.List;
 
-
+/**
+ * Třída reprezentující jeden záznam crawlovaných dat.
+ * @author Zdeněk Častorál
+ */
 public class Record implements Serializable {
+
+    /**
+     * Nadpis článku.
+     */
     private String title;
+
+    /**
+     * Datum článku.
+     */
     private String date;
+
+    /**
+     * Autor článku.
+     */
     private String author;
+
+    /**
+     * Zdroj článku.
+     */
     private String source;
+
+    /**
+     * Perex článku.
+     */
     private String perex;
+
+    /**
+     * Obsah článku.
+     */
     private String body;
 
+    /**
+     * URL adresa článku.
+     */
     private String url;
+
+    /**
+     * Datum stažení.
+     */
     private String downloadedDate;
 
+    /**
+     * Bezparametrický konstruktor.
+     */
     public Record() {
     }
 
+    /**
+     * Konstruktor nastavující atributy.
+     * @param title nadpis článku
+     * @param date datum článku
+     * @param author autor článku
+     * @param source zdroj článku
+     * @param perex perex článku
+     * @param body obsah článku
+     * @param url url adresa článku
+     * @param downloadedDate datum stažení
+     */
     public Record(String title, String date, String author, String source, String perex,
                   String body, String url, String downloadedDate) {
         this.title = title;
@@ -44,6 +92,11 @@ public class Record implements Serializable {
                 '}';
     }
 
+    /**
+     * Uloží list Record do souboru, který je zadán cestou v parametru.
+     * @param path cesta k uložení souboru
+     * @param list list Record
+     */
     public static void save(String path, List<Record> list) {
         try {
             FileOutputStream fileOut = new FileOutputStream(path);
@@ -57,6 +110,11 @@ public class Record implements Serializable {
         }
     }
 
+    /**
+     * Načte záznamy ze souboru, který je předán parametrem.
+     * @param serializedFile soubor k načtení
+     * @return list Record
+     */
     public static List<Record> load(File serializedFile) {
         final Object object;
         try {

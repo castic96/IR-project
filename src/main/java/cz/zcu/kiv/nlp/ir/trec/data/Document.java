@@ -14,34 +14,18 @@ import java.util.Date;
  */
 public interface Document {
 
-    /**
-     * Text dokumentu
-     * @return text
-     */
     String getText();
 
-    /**
-     * Unikátní id dokumentu
-     * @return id dokumentu
-     */
     String getId();
 
-    /**
-     * Titulek dokumentu
-     * @return titulek dokumentu
-     */
     String getTitle();
 
-    /**
-     * Datum přidání dokumentu (tj. např. indexace nebo stažení nebo publikování
-     *
-     * @return datum vztažené k dokumentu
-     */
     Date getDate();
 
     void setId(String id);
 
     void setText(String text);
+
     void setTitle(String title);
 
 }

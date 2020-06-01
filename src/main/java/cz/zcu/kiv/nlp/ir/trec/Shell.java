@@ -5,23 +5,40 @@ import cz.zcu.kiv.nlp.ir.trec.search.SearchType;
 import cz.zcu.kiv.nlp.ir.trec.utils.Messages;
 import cz.zcu.kiv.nlp.ir.trec.utils.SerializedDataHelper;
 import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.*;
 
+/**
+ * Příkazový interpret. Zpracovává vstupy od uživatele a vypisuje požadované výstupy.
+ * @author Zdeněk Častorál
+ */
 public class Shell {
 
     /**
-     * Logger pro třídu Index.
+     * Instance indexu.
      */
-    private static Logger log = Logger.getLogger(Shell.class);
-
     private Index index;
+
+    /**
+     * Scanner pro načítání vstupů ze stdin.
+     */
     private Scanner sc = new Scanner(System.in);
+
+    /**
+     * Defaultní cesta k datovému souboru.
+     */
     private static final String DEFAULT_INPUT_DATA = "data/my_testing_data.json";
+
+    /**
+     * Defaultní nastavení počtu nejlepších výsledků.
+     */
     private static final int DEFAULT_TOP_RESULTS = 10;
 
+    /**
+     * Hlavní metoda shellu. Parsuje vstup z konzole a
+     * spouští specifické metody pro zpracování vstupu.
+     */
     public void run() {
         String input;
         String[] splittedInput;
@@ -89,6 +106,10 @@ public class Shell {
         }
     }
 
+    /**
+     * Metoda sloužící k úpravě existujícího dokumentu.
+     * @param parameters parametry příkazové řádky
+     */
     private void updateDoc(String[] parameters) {
         Document newDocument;
         List<Document> documents;
@@ -137,6 +158,10 @@ public class Shell {
 
     }
 
+    /**
+     * Metoda sloužící k odstranění dokumentu.
+     * @param parameters parametry příkazové řádky
+     */
     private void deleteDoc(String[] parameters) {
         if (parameters.length == 0) {
             System.out.print(Messages.LESS_COUNT_OF_PARAMS.getText());
@@ -158,6 +183,10 @@ public class Shell {
         }
     }
 
+    /**
+     * Metoda vytvoří nový dokument v aktuálním indexu.
+     * @param parameters parametry příkazové řádky
+     */
     private void createDoc(String[] parameters) {
         DocumentNew newDocument;
         List<Document> documents;
@@ -193,6 +222,11 @@ public class Shell {
 
     }
 
+    /**
+     * Metoda vyhledá zadaný výraz v daném indexu.
+     * @param parameters parametry příkazové řádky
+     * @param isBooleanSearch přepínač, zda se jedná o vyhledávání typu boolean
+     */
     private void search(String[] parameters, boolean isBooleanSearch) {
         List<Result> results;
         StringBuilder query = new StringBuilder();
@@ -241,10 +275,14 @@ public class Shell {
             return;
         }
 
-        printResults(results, queryStr);
+        printResults(results);
 
     }
 
+    /**
+     * Metoda zaindexuje dokumenty uložené v daném souboru.
+     * @param parameters parametry příkazové řádky
+     */
     private void indexDocs(String[] parameters) {
         String path;
         String[] splittedPath;
@@ -299,6 +337,10 @@ public class Shell {
         System.out.print(Messages.DOCS_INDEXED_SUCCEED.getText());
     }
 
+    /**
+     * Metoda uloží aktuální index do souboru.
+     * @param parameters parametry příkazové řádky
+     */
     private void saveIndex(String[] parameters) {
         if (parameters.length == 0) {
             System.out.print(Messages.LESS_COUNT_OF_PARAMS.getText());
@@ -320,6 +362,10 @@ public class Shell {
 
     }
 
+    /**
+     * Metoda načte index uložený v souboru.
+     * @param parameters parametry příkazové řádky
+     */
     private void loadIndex(String[] parameters) {
         InvertedIndex loadedIndex;
 
@@ -346,6 +392,10 @@ public class Shell {
 
     }
 
+    /**
+     * Metoda vytvoří nový index.
+     * @param parameters parametry příkazové řádky
+     */
     private void createIndex(String[] parameters) {
         if (parameters.length > 0) {
             System.out.print(Messages.IRELEVANT_PARAMS.getText());
@@ -360,12 +410,20 @@ public class Shell {
         System.out.print(Messages.CREATE_INDEX_SUCCEED.getText());
     }
 
+    /**
+     * Metoda ukončí aplikaci.
+     * @param parameters parametry příkazové řádky
+     */
     private void exit(String[] parameters) {
         if (parameters.length > 0) {
             System.out.print(Messages.IRELEVANT_PARAMS.getText());
         }
     }
 
+    /**
+     * Metoda vypíše nápovědu o použití aplikace.
+     * @param parameters parametry příkazové řádky
+     */
     private void help(String[] parameters) {
         if (parameters.length > 0) {
             System.out.print(Messages.IRELEVANT_PARAMS.getText());
@@ -374,10 +432,20 @@ public class Shell {
         System.out.print(Messages.USAGE.getText());
     }
 
+    /**
+     * Metoda načte data z JSON souboru.
+     * @param fileName název souboru k načtení
+     * @return list instancí třídy Record
+     */
     private static List<Record> loadData(String fileName) {
         return Utils.readRecordsFromJson(fileName);
     }
 
+    /**
+     * Metoda převede data z listu objektů Record do listu objektů Document.
+     * @param inputData list objektů Record
+     * @return list objektů Document
+     */
     private List<Document> convertDataIntoDocument(List<Record> inputData) {
 
         List<Document> documents = new ArrayList<>();
@@ -397,22 +465,23 @@ public class Shell {
         return documents;
     }
 
-    private void printResults(List<Result> results, String query) {
+    /**
+     * Metoda vytiskne výsledky hledání.
+     * @param results výsledky hledání uložené v listu objektů Results
+     */
+    private void printResults(List<Result> results) {
         Document document;
         Result result;
 
         System.out.println(Messages.TOP_RESULTS.getText() + results.size());
 
         for (int i = 0; i < results.size(); i++) {
-//            if(top == i) {
-//                return;
-//            }
 
             result = results.get(i);
             document = index.getInvertedIndex().getDocuments().getDocumentById(result.getDocumentID());
 
             if (document == null) {
-                log.error(Messages.DOCUMENT_NOT_FOUND.getText());
+                System.out.println(Messages.DOCUMENT_NOT_FOUND.getText());
                 return;
             }
 

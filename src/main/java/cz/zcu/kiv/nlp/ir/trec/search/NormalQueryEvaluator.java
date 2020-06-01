@@ -8,8 +8,15 @@ import cz.zcu.kiv.nlp.ir.trec.preprocessing.Preprocessing;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Třída pro vyhodnocení normálního dotazu.
+ * @author Zdeněk Častorál
+ */
 public class NormalQueryEvaluator {
 
+    /**
+     * Instance preprocessingu.
+     */
     private Preprocessing preprocessing;
 
     /**
@@ -28,6 +35,13 @@ public class NormalQueryEvaluator {
      */
     private Map<String, Double> docVectorNorms;
 
+    /**
+     * Konstruktor nastavující atributy.
+     * @param preprocessing instance preprocessingu
+     * @param invertedIndex instance invertovaného indexu
+     * @param idf instance hodnot idf pro termy
+     * @param docVectorNorms normy pro dané dokumenty
+     */
     public NormalQueryEvaluator(Preprocessing preprocessing, Map<String, Map<String, DocInfo>> invertedIndex, Map<String, Double> idf,
                                 Map<String, Double> docVectorNorms) {
         this.preprocessing = preprocessing;
@@ -36,6 +50,11 @@ public class NormalQueryEvaluator {
         this.docVectorNorms = docVectorNorms;
     }
 
+    /**
+     * Metoda, která vyhledává pomocí normálního dotazu.
+     * @param query dotaz k vyhledání
+     * @return mapa -> String (id dokumentu), double (skóre) výsledků
+     */
     public Map<String, Double> evaluateNormalQuery(String query) {
         Map<String, DocInfo> indexedQuery = new HashMap<>();
 
@@ -48,6 +67,10 @@ public class NormalQueryEvaluator {
         return resultsMap;
     }
 
+    /**
+     * Metoda spočítá TFIDF pro dotaz
+     * @param queryIndex dotaz
+     */
     private void countQueryTFIDF(Map<String, DocInfo> queryIndex) {
         DocInfo currentDoc;
         double currentIdf;

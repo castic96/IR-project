@@ -29,9 +29,40 @@ public class InvertedIndex implements Serializable {
      */
     private DocRepo documents;
 
+    /**
+     * Konstruktor, který inicializuje mapu ids a repozitář dokumentů.
+     */
     public InvertedIndex() {
         this.idf = new HashMap<>();
         this.documents = new DocRepo();
+    }
+
+    /**
+     * Metoda, která odstraní dokument na základě zadaného id dokumentu.
+     * @param id id dokumentu k odstranění
+     * @return true - pokud bylo odstranění úspěšné, false - jinak
+     */
+    public boolean dropDocumentById(String id) {
+        Iterator<Map.Entry<String, Map<String, DocInfo>>> iter;
+
+        for(Map<String, DocInfo> currentTermMap : invertedIndexMap.values()) {
+            if (currentTermMap.containsKey(id)) {
+                currentTermMap.remove(id);
+            }
+        }
+
+        iter = invertedIndexMap.entrySet().iterator();
+
+        while (iter.hasNext()) {
+            Map.Entry<String, Map<String, DocInfo>> currentTerm = iter.next();
+
+            if (currentTerm.getValue().size() <= 0) {
+                iter.remove();
+            }
+
+        }
+
+        return true;
     }
 
     public void setInvertedIndexMap(Map<String, Map<String, DocInfo>> invertedIndexMap) {
@@ -60,36 +91,5 @@ public class InvertedIndex implements Serializable {
 
     public void addDocuments(List<Document> documents) {
         this.documents.addDocumentList(documents);
-    }
-
-    public boolean dropDocumentById(String id) {
-        Iterator<Map.Entry<String, Map<String, DocInfo>>> iter;
-
-        for(Map<String, DocInfo> currentTermMap : invertedIndexMap.values()) {
-            if (currentTermMap.containsKey(id)) {
-                currentTermMap.remove(id);
-            }
-        }
-
-        iter = invertedIndexMap.entrySet().iterator();
-
-        while (iter.hasNext()) {
-            Map.Entry<String, Map<String, DocInfo>> currentTerm = iter.next();
-
-            if (currentTerm.getValue().size() <= 0) {
-                iter.remove();
-            }
-
-        }
-
-//        for (Map.Entry<String, Map<String, DocInfo>> currentTerm : invertedIndexMap.entrySet()) {
-//            if (currentTerm.getValue().size() <= 0) {
-//                invertedIndexMap.remove(currentTerm.getKey());
-//            }
-//        }
-
-
-
-        return true;
     }
 }

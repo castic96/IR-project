@@ -6,6 +6,10 @@ import org.apache.lucene.search.BooleanClause;
 
 import java.util.*;
 
+/**
+ * Třída pro vyhodnocení booleovského výrazu.
+ * @author Zdeněk Častorál
+ */
 public class BooleanQueryEvaluator {
 
     /**
@@ -18,29 +22,39 @@ public class BooleanQueryEvaluator {
      */
     private Map<String, Map<String, DocInfo>> invertedIndex;
 
+    /**
+     * Konstruktor nastavující atributy.
+     * @param invertedIndex instance invertovaného indexu
+     */
     public BooleanQueryEvaluator(Map<String, Map<String, DocInfo>> invertedIndex) {
         this.docInfoComparator = new DocInfoComparator();
         this.invertedIndex = invertedIndex;
     }
 
+    /**
+     * Metoda rekurzivně prochází a zpracovává strom pro vyhledání dotazu.
+     * @param node uzel stromu
+     * @param isNot logická hodnota, zda je nutné znegovat výsledek
+     * @return list DocInfo
+     */
     public List<DocInfo> computeDocInfoResults(BooleanQueryNode node, boolean isNot) {
 
         if (node.isTerm()) {
 
-            // negation of term (includes NOT clause)
+            // negace termu (obsahuje klauzuli NOT)
             if (isNot) {
                 String nodeTerm = node.getQueryStr();
 
                 Set<DocInfo> allDocInfos = new HashSet<>();
 
-                // add all new docInfos except nodeTerm
+                // přidá všechny nové DocInfo mimo nodeTerm
                 for (String currentTerm : invertedIndex.keySet()) {
                     if (!currentTerm.equals(nodeTerm)) {
                         allDocInfos.addAll(invertedIndex.get(currentTerm).values());
                     }
                 }
 
-                // remove all docInfos, which include nodeTerm
+                // odstraní všechny DocInfo, které obsahují nodeTerm
                 if (invertedIndex.containsKey(nodeTerm)) {
                     for (DocInfo currentDocInfo : invertedIndex.get(nodeTerm).values()) {
                         allDocInfos.remove(currentDocInfo);
@@ -59,7 +73,7 @@ public class BooleanQueryEvaluator {
 
         }
 
-        // node is boolean expression
+        // uzel je booleovský výraz
         else {
 
             Collection<BooleanQueryNode> descendantQuery;
@@ -127,6 +141,12 @@ public class BooleanQueryEvaluator {
         }
     }
 
+    /**
+     * Metoda zpracuje klauzuli NOT.
+     * @param docInfoList1 list původních DocInfo
+     * @param docInfoList2 list nových DocInfo
+     * @return list DocInfo
+     */
     private List<DocInfo> executeNot(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
         List<DocInfo> results = isEmpty(docInfoList1, docInfoList2);
 
@@ -137,6 +157,12 @@ public class BooleanQueryEvaluator {
         return executeNotForNonEmpty(docInfoList1, docInfoList2);
     }
 
+    /**
+     * Metoda zpracuje klauzuli NOT, pokud ani jeden z listů DocInfo není prázdný.
+     * @param docInfoList1 list původních DocInfo
+     * @param docInfoList2 list nových DocInfo
+     * @return list DocInfo
+     */
     private List<DocInfo> executeNotForNonEmpty(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
 
         List<DocInfo> results = new ArrayList<>();
@@ -150,6 +176,12 @@ public class BooleanQueryEvaluator {
         return results;
     }
 
+    /**
+     * Metoda zpracuje klauzuli AND.
+     * @param docInfoList1 list původních DocInfo
+     * @param docInfoList2 list nových DocInfo
+     * @return list DocInfo
+     */
     private List<DocInfo> executeAnd(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
         List<DocInfo> results = isEmpty(docInfoList1, docInfoList2);
 
@@ -160,6 +192,12 @@ public class BooleanQueryEvaluator {
         return executeAndForNonEmpty(docInfoList1, docInfoList2);
     }
 
+    /**
+     * Metoda zpracuje klauzuli AND, pokud ani jeden z listů DocInfo není prázdný.
+     * @param docInfoList1 list původních DocInfo
+     * @param docInfoList2 list nových DocInfo
+     * @return list DocInfo
+     */
     private List<DocInfo> executeAndForNonEmpty(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
 
         List<DocInfo> results = new ArrayList<>();
@@ -191,6 +229,12 @@ public class BooleanQueryEvaluator {
         return results;
     }
 
+    /**
+     * Metoda zpracuje klauzuli OR.
+     * @param docInfoList1 list původních DocInfo
+     * @param docInfoList2 list nových DocInfo
+     * @return list DocInfo
+     */
     private List<DocInfo> executeOr(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
         List<DocInfo> results = isEmpty(docInfoList1, docInfoList2);
 
@@ -202,6 +246,12 @@ public class BooleanQueryEvaluator {
 
     }
 
+    /**
+     * Metoda zpracuje klauzuli OR, pokud ani jeden z listů DocInfo není prázdný.
+     * @param docInfoList1 list původních DocInfo
+     * @param docInfoList2 list nových DocInfo
+     * @return list DocInfo
+     */
     private List<DocInfo> executeOrForNonEmpty(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
 
         List<DocInfo> results = new ArrayList<>();
@@ -246,6 +296,12 @@ public class BooleanQueryEvaluator {
         return results;
     }
 
+    /**
+     * Metoda ověří, zda je některý z předaných listů DocInfo prázný.
+     * @param docInfoList1 list DocInfo
+     * @param docInfoList2 list DocInfo
+     * @return list DocInfo
+     */
     private List<DocInfo> isEmpty(List<DocInfo> docInfoList1, List<DocInfo> docInfoList2) {
 
         if (docInfoList1.isEmpty() && docInfoList2.isEmpty()) return new ArrayList<>();
@@ -255,6 +311,11 @@ public class BooleanQueryEvaluator {
         return null;
     }
 
+    /**
+     * Zpracuje předaný term.
+     * @param currentTerm term ke zpracování
+     * @return list DocInfo
+     */
     private List<DocInfo> computeDocInfoTerm(String currentTerm) {
 
         if (!invertedIndex.containsKey(currentTerm)) {

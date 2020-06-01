@@ -7,10 +7,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Uzel stromu pro vyhledávání.
+ * @author Zdeněk Častorál
+ */
 public class BooleanQueryNode {
 
+    /**
+     * Potomci daného uzlu.
+     */
     private Map<BooleanClause.Occur, List<BooleanQueryNode>> descendants;
+
+    /**
+     * Dotaz v podobě řetězce.
+     */
     private String queryStr;
+
+    /**
+     * Logická hodnota, zda se jedná o term či ne.
+     */
     private boolean isTerm;
 
     public BooleanQueryNode() {

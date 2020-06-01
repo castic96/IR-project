@@ -2,7 +2,6 @@ package cz.zcu.kiv.nlp.ir.trec.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
 import cz.zcu.kiv.nlp.ir.trec.data.InvertedIndex;
 import cz.zcu.kiv.nlp.ir.trec.data.Record;
 
@@ -11,79 +10,20 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Stream;
 
-
+/**
+ * Knihovní třída pro práci se soubory.
+ * @author Zdeněk Častorál
+ */
 public class Utils {
-    public static final java.text.DateFormat SDF = new SimpleDateFormat("yyyy-MM-dd_HH_mm_SS");
 
     /**
-     * Saves text to given file.
-     *
-     * @param file file to save
-     * @param text text to save
+     * Načte data z daného souboru ve formátu JSON do listu Record.
+     * @param fileName název souboru pro načtení dat
+     * @return list záznamů (instance Record)
      */
-    public static void saveFile(File file, String text) {
-        try {
-            PrintStream printStream = new PrintStream(new FileOutputStream(file));
-            printStream.print(text);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Saves lines from the list into given file; each entry is saved as a new line.
-     *
-     * @param file file to save
-     * @param list lines of text to save
-     */
-    public static void saveFile(File file, Collection<String> list) {
-        try {
-
-            PrintStream printStream = new PrintStream(new FileOutputStream(file));
-            for (String text : list) {
-                printStream.println(text);
-            }
-        } catch (FileNotFoundException e) {
-
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Read lines from the stream; lines are trimmed and empty lines are ignored.
-     *
-     * @param inputStream stream
-     * @return list of lines
-     */
-    public static List<String> readTXTFile(InputStream inputStream) {
-        if (inputStream == null) {
-            throw new IllegalArgumentException("Cannot locate stream");
-        }
-        try {
-            List<String> result = new ArrayList<String>();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                if (!line.trim().isEmpty()) {
-                    result.add(line.trim());
-                }
-            }
-
-            inputStream.close();
-
-            return result;
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     public static List<Record> readRecordsFromJson(String fileName) {
         List<Record> records = null;
 
@@ -108,6 +48,11 @@ public class Utils {
         return records;
     }
 
+    /**
+     * Načte soubor se stop slovy.
+     * @param file název souboru k načtení
+     * @return množina stop slov
+     */
     public static Set<String> loadStopWords(String file) {
         Set<String> stopWords = new HashSet<>();
 
@@ -120,6 +65,11 @@ public class Utils {
         return stopWords;
     }
 
+    /**
+     * Uloží index do souboru.
+     * @param index index k uložení
+     * @param path cesta k souboru pro uložení indexu
+     */
     public static void saveIndex(InvertedIndex index, String path) {
         try {
             File file = new File(path);
@@ -137,6 +87,11 @@ public class Utils {
         }
     }
 
+    /**
+     * Načte index ze souboru.
+     * @param path cesta k indexu
+     * @return načtený index
+     */
     public static InvertedIndex loadIndex(String path) {
         Object object = null;
 

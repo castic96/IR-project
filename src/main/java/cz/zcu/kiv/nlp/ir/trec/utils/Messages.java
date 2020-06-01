@@ -1,5 +1,9 @@
 package cz.zcu.kiv.nlp.ir.trec.utils;
 
+/**
+ * Enum obsahující výpisy na konzoli
+ * @author Zdeněk Častorál
+ */
 public enum Messages {
 
     HEADER("----------------------------------------------------------------------------------------------------\n" +
@@ -11,7 +15,7 @@ public enum Messages {
             "\tcreate_index\t- create a new index\n" +
             "\tload_index <index_name>\t- load the specified index\n" +
             "\tsave_index <index_name>\t- save the current loaded index and set name of it\n" +
-            "\tindex_docs [file_path]\t- index docs from JSON file, optionally from 'file_path' file\n" +
+            "\tindex_docs [file_path]\t- index docs from JSON or BIN file, optionally from 'file_path' file\n" +
             "\tcreate_doc\t- create new document\n" +
             "\tupdate_doc <doc_id>\t- update document with specified id\n" +
             "\tdelete_doc <doc_id>\t- delete document with specified id\n" +
@@ -53,8 +57,12 @@ public enum Messages {
     DROP_DOC_FAILURE("Deleting the document failed.\n"),
     DOCS_UPDATED_SUCCEED("Updating done.\n"),
     TOTAL_COUNT_OF_RESULTS("Total count of results: "),
-    UNSUPPORTED_FILE_FORMAT("This file format is not supported.\n");
+    UNSUPPORTED_FILE_FORMAT("This file format is not supported.\n"),
+    INV_INDEX_SIZE("Size of inverted index: ");
 
+    /**
+     * Text pro každý výčet.
+     */
     private final String text;
 
     Messages(String text) {

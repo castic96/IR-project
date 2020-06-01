@@ -2,7 +2,6 @@ package cz.zcu.kiv.nlp.ir.trec.search;
 
 import cz.zcu.kiv.nlp.ir.trec.preprocessing.Preprocessing;
 import cz.zcu.kiv.nlp.ir.trec.utils.Messages;
-import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.precedence.PrecedenceQueryParser;
 import org.apache.lucene.search.BooleanClause;
@@ -12,19 +11,37 @@ import org.apache.lucene.search.TermQuery;
 
 import java.util.List;
 
+/**
+ * Parser pro vyhledávání pomocí booleovských dotazů.
+ * @author Zdeněk Častorál
+ */
 public class BooleanQueryParser {
 
-    private static Logger log = Logger.getLogger(BooleanQueryParser.class);
-
+    /**
+     * Instance preprocessingu.
+     */
     private Preprocessing preprocessing;
 
+    /**
+     * Lucene parser.
+     */
     private PrecedenceQueryParser parser;
 
+    /**
+     * Konstruktor nastavující atributy.
+     * @param preprocessing instance preprocessingu
+     */
     public BooleanQueryParser(Preprocessing preprocessing) {
         this.preprocessing = preprocessing;
         this.parser = new PrecedenceQueryParser();
     }
 
+    /**
+     * Metoda parsuje dotaz v podobě Stringu a volá metodu
+     * k vytvoření stromu pro vyhledávání.
+     * @param query dotaz k parsování
+     * @return kořen stromu pro vyhledávání
+     */
     public BooleanQueryNode parseBooleanQuery(String query) {
         BooleanQueryNode root = new BooleanQueryNode();
 
@@ -34,13 +51,18 @@ public class BooleanQueryParser {
             buildBooleanQueryTree(queryLucene, root);
 
         } catch(QueryNodeException e) {
-            log.error(Messages.QUERY_PARSER_INVALID.getText());
+            System.out.println(Messages.QUERY_PARSER_INVALID.getText());
             return null;
         }
 
         return root;
     }
 
+    /**
+     * Metoda rekurzivně vytvoří strom pro booleovské vyhledávání.
+     * @param query dotaz k vyhledání
+     * @param node uzel stromu
+     */
     private void buildBooleanQueryTree(Query query, BooleanQueryNode node) {
 
         if (query instanceof TermQuery) {

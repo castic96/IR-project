@@ -12,11 +12,6 @@ import java.util.*;
  */
 public class BasicPreprocessing implements Preprocessing {
 
-    /**
-     * Logger pro třídu BasicPreprocessing.
-     */
-    private static Logger log = Logger.getLogger(BasicPreprocessing.class);
-
     Stemmer stemmer;
     Tokenizer tokenizer;
     Set<String> stopwords;
@@ -63,7 +58,7 @@ public class BasicPreprocessing implements Preprocessing {
 
             progress += progressStep;
             if (progress >= progLimit) {
-                log.info("Indexing progress: " + (int)progress + " %.");
+                System.out.println("Indexing process: " + (int)progress + " %.");
                 progLimit += 10;
             }
 

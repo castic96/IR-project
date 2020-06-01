@@ -17,7 +17,6 @@ import java.util.List;
  */
 public interface Searcher {
     List<Result> search(String query);
-
     List<Result> search(String query, SearchType searchType, int countOfTop);
 }
 

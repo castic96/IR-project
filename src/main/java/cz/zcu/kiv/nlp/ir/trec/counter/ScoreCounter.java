@@ -5,13 +5,18 @@ import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Knihovní třída pro výpočet skóre dokumentů odpovídajících zadanému dotazu.
+ * @author Zdeněk Častorál
+ */
 public class ScoreCounter {
 
     /**
-     * Procedure computes score for documents.
-     * @param invertedIndex
-     * @param indexedQuery
-     * @return Map of String document id and Double score.
+     * Metoda vyhodnocuje skóre pro dokumenty, které odpovídají zadanému dotazu.
+     * @param invertedIndex invertovaný index
+     * @param indexedQuery zaindexovaný dotaz
+     * @param norms normy dokumentů
+     * @return mapa -> String (id dokumentu), double (skóre dokumentu)
      */
     public static Map<String, Double> computeScore(Map<String, Map<String, DocInfo>> invertedIndex,
                                                    Map<String, DocInfo> indexedQuery, Map<String, Double> norms) {
@@ -25,6 +30,12 @@ public class ScoreCounter {
         return scores;
     }
 
+    /**
+     * Metoda vypočítá skalární součin dokumentů a dotazu.
+     * @param invertedIndex invertovaný index
+     * @param indexedQuery zaindexovaný dotaz
+     * @param scores mapa -> String (id dokumentu), double (skalární součin)
+     */
     private static void computeScalarProduct(Map<String, Map<String, DocInfo>> invertedIndex,
                                              Map<String, DocInfo> indexedQuery, Map<String, Double> scores) {
 
@@ -42,6 +53,12 @@ public class ScoreCounter {
         }
     }
 
+    /**
+     * Pomocná metoda, která vypočítá skalární součin jednoho dokumentu a dotazu.
+     * @param docInfoQuery dokument
+     * @param docInfoDoc dotaz
+     * @param scores mapa -> String (id dokumentu), double (skalární součin)
+     */
     private static void computePartOfScalarProduct(DocInfo docInfoQuery, DocInfo docInfoDoc, Map<String, Double> scores) {
         double newElement = computeElement(docInfoQuery, docInfoDoc);
         String currentDocId = docInfoDoc.getDocumentId();
@@ -60,10 +77,23 @@ public class ScoreCounter {
 
     }
 
+    /**
+     * Pomocná metoda, vynásobí TFIDF dvou předaných dokumentů.
+     * @param docInfo1 dokument 1
+     * @param docInfo2 dokument 2
+     * @return součin TFIDF dokumentů
+     */
     private static double computeElement(DocInfo docInfo1, DocInfo docInfo2) {
         return docInfo1.getTfidf() * docInfo2.getTfidf();
     }
 
+    /**
+     * Metoda vypočítá normy dokumentů.
+     * @param invertedIndex invertovaný index
+     * @param indexedQuery zaindexovaný dotaz
+     * @param scores mapa jednotlivých skóre pro dané dokumenty
+     * @param norms normy dokumentů
+     */
     private static void normalizeScores(Map<String, Map<String, DocInfo>> invertedIndex, Map<String, DocInfo> indexedQuery,
                                         Map<String, Double> scores, Map<String, Double> norms) {
 
@@ -86,6 +116,11 @@ public class ScoreCounter {
 
     }
 
+    /**
+     * Pomocná metoda pro výpočet normy dotazu.
+     * @param indexedQuery zaindexovaný dotaz
+     * @return norma dotazu
+     */
     private static double getQueryNorm(Map<String, DocInfo> indexedQuery) {
         double sum = 0.0;
 
@@ -96,6 +131,12 @@ public class ScoreCounter {
         return Math.sqrt(sum);
     }
 
+    /**
+     * Pomocná metoda pro získání normy dokumentu.
+     * @param docId id dokumentu
+     * @param norms normy všech dokumentů
+     * @return norma konkrétního dokumentu
+     */
     private static double getDocNorm(String docId, Map<String, Double> norms) {
         return norms.get(docId);
     }

@@ -5,8 +5,17 @@ import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Knihovní třída pro výpočet DF, IDF, W, WF, TFIDF
+ * @author Zdeněk Častorál
+ */
 public class TfidfCounter {
 
+    /**
+     * Vypočte frekvenci termu ve všech dokumentech.
+     * @param invertedIndex invertovaný index
+     * @return mapa -> String (term), Integer (DF)
+     */
     public static Map<String, Integer> countDF(Map<String, Map<String, DocInfo>> invertedIndex) {
         Map<String, Integer> df = new HashMap<>();
 
@@ -17,6 +26,12 @@ public class TfidfCounter {
         return df;
     }
 
+    /**
+     * Vypočte invertovanou frekvenci termu v dokumentech.
+     * @param idf mapa hodnot idf
+     * @param df mapa hodnot df
+     * @param n počet dokumentů
+     */
     public static void countIDF(Map<String, Double> idf, Map<String, Integer> df, int n) {
         double currentIDF;
 
@@ -30,6 +45,12 @@ public class TfidfCounter {
         }
     }
 
+    /**
+     * Vypočte hodnotu TFIDF pro dokumenty pro dané termy a vrátí normy dokumentů.
+     * @param invertedIndex invertovaný index
+     * @param idf mapa hodnot idf
+     * @return  normy dokumentů
+     */
     public static Map<String, Double> countDocTFIDF(Map<String, Map<String, DocInfo>> invertedIndex, Map<String, Double> idf) {
         double currentIdf;
         double currentTfidf;
@@ -70,10 +91,21 @@ public class TfidfCounter {
         return norms;
     }
 
+    /**
+     * Vypočte W (= složka TFIDF).
+     * @param idf invertovaná frekvence termu v dokumentu
+     * @param wf vážená frekvence termu
+     * @return složka TFIDF
+     */
     public static double countW(double idf, double wf) {
         return wf * idf;
     }
 
+    /**
+     * Vypočte hodnotu WF - vážené TF.
+     * @param tf frekvence termu
+     * @return vážená frekvence termu
+     */
     public static double countWF(int tf) {
         return (1.0 + Math.log10(tf));
     }

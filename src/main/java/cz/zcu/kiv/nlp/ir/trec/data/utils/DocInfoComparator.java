@@ -5,6 +5,10 @@ import cz.zcu.kiv.nlp.ir.trec.data.DocInfo;
 import java.io.Serializable;
 import java.util.Comparator;
 
+/**
+ * Comparator pro třídu DocInfo.
+ * @author Zdeněk Častorál
+ */
 public class DocInfoComparator implements Comparator<DocInfo>, Serializable {
 
     @Override

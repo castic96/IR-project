@@ -3,9 +3,11 @@ package cz.zcu.kiv.nlp.ir.trec;
 import cz.zcu.kiv.nlp.ir.trec.data.*;
 import cz.zcu.kiv.nlp.ir.trec.search.SearchType;
 import cz.zcu.kiv.nlp.ir.trec.utils.Messages;
+import cz.zcu.kiv.nlp.ir.trec.utils.SerializedDataHelper;
 import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.util.*;
 
 public class Shell {
@@ -245,6 +247,7 @@ public class Shell {
 
     private void indexDocs(String[] parameters) {
         String path;
+        String[] splittedPath;
         List<Record> inputData;
         List<Document> documents;
 
@@ -265,13 +268,31 @@ public class Shell {
             path = parameters[0];
         }
 
-        inputData = loadData(path);
+        splittedPath = path.split("\\.");
 
-        if (inputData == null) {
+        if (splittedPath[splittedPath.length - 1].toLowerCase().equals("json")) {
+            inputData = loadData(path);
+
+            if (inputData == null) {
+                return;
+            }
+
+            documents = convertDataIntoDocument(inputData);
+        }
+        else if (splittedPath[splittedPath.length - 1].toLowerCase().equals("bin")) {
+            File serializedData = new File(path);
+
+            if (!serializedData.isFile()) {
+                System.out.print(Messages.FILE_DOES_NOT_EXIST.getText());
+                return;
+            }
+
+            documents = SerializedDataHelper.loadDocument(serializedData);
+        }
+        else {
+            System.out.print(Messages.UNSUPPORTED_FILE_FORMAT.getText());
             return;
         }
-
-        documents = convertDataIntoDocument(inputData);
 
         index.index(documents);
 
@@ -330,12 +351,11 @@ public class Shell {
             System.out.print(Messages.IRELEVANT_PARAMS.getText());
         }
 
-        if (index == null) {
-            index = new Index();
-        }
-        else {
+        if (index != null) {
             System.out.print(Messages.REPLACE_INDEX.getText());
         }
+
+        index = new Index();
 
         System.out.print(Messages.CREATE_INDEX_SUCCEED.getText());
     }

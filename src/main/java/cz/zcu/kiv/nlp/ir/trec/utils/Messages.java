@@ -52,7 +52,8 @@ public enum Messages {
     DROP_DOC_SUCCEED("Document has been deleted successfully.\n"),
     DROP_DOC_FAILURE("Deleting the document failed.\n"),
     DOCS_UPDATED_SUCCEED("Updating done.\n"),
-    TOTAL_COUNT_OF_RESULTS("Total count of results: ");
+    TOTAL_COUNT_OF_RESULTS("Total count of results: "),
+    UNSUPPORTED_FILE_FORMAT("This file format is not supported.\n");
 
     private final String text;
 

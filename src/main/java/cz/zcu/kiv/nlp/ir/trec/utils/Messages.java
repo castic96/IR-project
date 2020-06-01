@@ -51,7 +51,8 @@ public enum Messages {
     ENTER_DOC_TEXT("Enter text of document: "),
     DROP_DOC_SUCCEED("Document has been deleted successfully.\n"),
     DROP_DOC_FAILURE("Deleting the document failed.\n"),
-    DOCS_UPDATED_SUCCEED("Updating done.\n");
+    DOCS_UPDATED_SUCCEED("Updating done.\n"),
+    TOTAL_COUNT_OF_RESULTS("Total count of results: ");
 
     private final String text;
 

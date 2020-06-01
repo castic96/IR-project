@@ -80,47 +80,45 @@ public class TestTrecEval {
         index.index(documents);
 
         log.info("Documents indexed.");
-
-        List<Result> resultHits = index.search("marvanové AND ods", SearchType.BOOLEAN);
-        log.info("Count of hits: " + resultHits.size());
+//        List<Result> resultHits = index.search("marvanové AND ods", SearchType.BOOLEAN);
+//        log.info("Count of hits: " + resultHits.size());
 
         List<String> lines = new ArrayList<String>();
 
-//        for (Topic t : topics) {
-//            //TODO vytvoření dotazu, třída Topic představuje dotaz pro vyhledávání v zaindexovaných dokumentech
-//            //a obsahuje tři textová pole title, description a narrative. To jak sestavíte dotaz je na Vás a pravděpodobně
-//            //to ovlivní výsledné vyhledávání - zkuste změnit a uvidíte jaký MAP (Mean Average Precision) dostanete pro jednotlivé
-//            //kombinace např. pokud budete vyhledávat jen pomocí title (t.getTitle()) nebo jen pomocí description (t.getDescription())
-//            //nebo jejich kombinací (t.getTitle() + " " + t.getDescription())
-//            List<Result> resultHits = index.search(t.getTitle() + " " + t.getDescription() + " " + t.getNarrative());
-//            log.info("Count of hits: " + resultHits.size());
-//            log.info("Example: " + index.getInvertedIndex().getDocuments().getDocumentById(resultHits.get(0).getDocumentID()).getTitle());
-//
-//            Comparator<Result> cmp = new Comparator<Result>() {
-//                public int compare(Result o1, Result o2) {
-//                    if (o1.getScore() > o2.getScore()) return -1;
-//                    if (o1.getScore() == o2.getScore()) return 0;
-//                    return 1;
-//                }
-//            };
-//
-//            Collections.sort(resultHits, cmp);
-//            for (Result r : resultHits) {
-//                final String line = r.toString(t.getId());
-//                lines.add(line);
-//            }
-//            if (resultHits.size() == 0) {
-//                lines.add(t.getId() + " Q0 " + "abc" + " " + "99" + " " + 0.0 + " runindex1");
-//            }
-//        }
-//        final File outputFile = new File(OUTPUT_DIR + "/results " + SerializedDataHelper.SDF.format(System.currentTimeMillis()) + ".txt");
-//        IOUtils.saveFile(outputFile, lines);
-//        //try to run evaluation
-//        try {
-//            runTrecEval(outputFile.toString());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        for (Topic t : topics) {
+            //TODO vytvoření dotazu, třída Topic představuje dotaz pro vyhledávání v zaindexovaných dokumentech
+            //a obsahuje tři textová pole title, description a narrative. To jak sestavíte dotaz je na Vás a pravděpodobně
+            //to ovlivní výsledné vyhledávání - zkuste změnit a uvidíte jaký MAP (Mean Average Precision) dostanete pro jednotlivé
+            //kombinace např. pokud budete vyhledávat jen pomocí title (t.getTitle()) nebo jen pomocí description (t.getDescription())
+            //nebo jejich kombinací (t.getTitle() + " " + t.getDescription())
+            List<Result> resultHits = index.search(t.getTitle() + " " + t.getDescription() + " " + t.getNarrative());
+            log.info("Count of hits: " + resultHits.size());
+
+            Comparator<Result> cmp = new Comparator<Result>() {
+                public int compare(Result o1, Result o2) {
+                    if (o1.getScore() > o2.getScore()) return -1;
+                    if (o1.getScore() == o2.getScore()) return 0;
+                    return 1;
+                }
+            };
+
+            Collections.sort(resultHits, cmp);
+            for (Result r : resultHits) {
+                final String line = r.toString(t.getId());
+                lines.add(line);
+            }
+            if (resultHits.size() == 0) {
+                lines.add(t.getId() + " Q0 " + "abc" + " " + "99" + " " + 0.0 + " runindex1");
+            }
+        }
+        final File outputFile = new File(OUTPUT_DIR + "/results " + SerializedDataHelper.SDF.format(System.currentTimeMillis()) + ".txt");
+        IOUtils.saveFile(outputFile, lines);
+        //try to run evaluation
+        try {
+            runTrecEval(outputFile.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static String runTrecEval(String predictedFile) throws IOException {

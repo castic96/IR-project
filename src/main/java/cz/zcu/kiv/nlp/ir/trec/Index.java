@@ -31,6 +31,8 @@ public class Index implements Indexer, Searcher, Serializable {
 
     private Preprocessing preprocessing;
 
+    private static final int DEFAULT_COUNT_OF_TOP = 3000;
+
 
     public Index() {
         this.preprocessing = new BasicPreprocessing(new CzechStemmerLight(), new AdvancedTokenizer(),
@@ -103,7 +105,11 @@ public class Index implements Indexer, Searcher, Serializable {
      */
     @Override
     public List<Result> search(String query) {
-        return search(query, SearchType.NORMAL);
+        return search(query, SearchType.NORMAL, DEFAULT_COUNT_OF_TOP);
+    }
+
+    public List<Result> search(String query, SearchType searchType) {
+        return search(query, searchType, DEFAULT_COUNT_OF_TOP);
     }
 
     /**
@@ -115,7 +121,7 @@ public class Index implements Indexer, Searcher, Serializable {
      * @return list výsledků pro zadaný dotaz.
      */
     @Override
-    public List<Result> search(String query, SearchType searchType) {
+    public List<Result> search(String query, SearchType searchType, int countOfTop) {
         List<Result> results;
 
         if (searchType.equals(SearchType.BOOLEAN)) {
@@ -123,6 +129,25 @@ public class Index implements Indexer, Searcher, Serializable {
         }
         else {
             results = normalSearch(query);
+        }
+
+        if (results != null) {
+            if (results.size() == 0) {
+                results = null;
+            }
+        }
+
+        if (results != null) {
+            System.out.println(Messages.TOTAL_COUNT_OF_RESULTS.getText() + results.size());
+
+            if (countOfTop > results.size()) {
+                countOfTop = results.size();
+            }
+
+            results = results.subList(0, countOfTop);
+        }
+        else {
+            System.out.println(Messages.TOTAL_COUNT_OF_RESULTS.getText() + 0);
         }
 
         return results;

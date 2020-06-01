@@ -212,19 +212,6 @@ public class Shell {
 
         }
 
-        queryStr = query.toString();
-
-        if (isBooleanSearch) {
-            results = index.search(queryStr, SearchType.BOOLEAN);
-        }
-        else {
-            results = index.search(queryStr, SearchType.NORMAL);
-        }
-
-        if (results == null) {
-            return;
-        }
-
         System.out.print(Messages.SET_COUNT_OF_HITS.getText());
 
         if (sc.hasNextInt()) {
@@ -237,7 +224,22 @@ public class Shell {
 
         sc.nextLine();
 
-        printResults(results, queryStr, topResults);
+        queryStr = query.toString();
+
+        System.out.println(Messages.RESULTS_PRINT.getText() + "\"" + queryStr + "\"");
+
+        if (isBooleanSearch) {
+            results = index.search(queryStr, SearchType.BOOLEAN, topResults);
+        }
+        else {
+            results = index.search(queryStr, SearchType.NORMAL, topResults);
+        }
+
+        if (results == null) {
+            return;
+        }
+
+        printResults(results, queryStr);
 
     }
 
@@ -375,17 +377,16 @@ public class Shell {
         return documents;
     }
 
-    private void printResults(List<Result> results, String query, int top) {
+    private void printResults(List<Result> results, String query) {
         Document document;
         Result result;
 
-        System.out.println(Messages.RESULTS_PRINT.getText() + "\"" + query + "\"");
-        System.out.println(Messages.TOP_RESULTS.getText() + top);
+        System.out.println(Messages.TOP_RESULTS.getText() + results.size());
 
         for (int i = 0; i < results.size(); i++) {
-            if(top == i) {
-                return;
-            }
+//            if(top == i) {
+//                return;
+//            }
 
             result = results.get(i);
             document = index.getInvertedIndex().getDocuments().getDocumentById(result.getDocumentID());

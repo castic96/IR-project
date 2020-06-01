@@ -4,6 +4,7 @@ import cz.zcu.kiv.nlp.ir.trec.counter.TfidfCounter;
 import cz.zcu.kiv.nlp.ir.trec.data.*;
 import cz.zcu.kiv.nlp.ir.trec.preprocessing.*;
 import cz.zcu.kiv.nlp.ir.trec.search.*;
+import cz.zcu.kiv.nlp.ir.trec.utils.Messages;
 import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
 import org.apache.log4j.Logger;
 
@@ -44,6 +45,8 @@ public class Index implements Indexer, Searcher, Serializable {
     @Override
     public void index(List<Document> documents) {
 
+        this.invertedIndex.addDocuments(documents);
+
         if (this.invertedIndex.getInvertedIndexMap() == null) {
             this.invertedIndex.setInvertedIndexMap(this.preprocessing.indexAllDocuments(documents));
         }
@@ -51,8 +54,6 @@ public class Index implements Indexer, Searcher, Serializable {
             this.invertedIndex.setInvertedIndexMap(this.preprocessing.indexAllDocuments(
                     documents, this.invertedIndex.getInvertedIndexMap()));
         }
-
-        this.invertedIndex.addDocuments(documents);
 
         TfidfCounter.countIDF(this.invertedIndex.getIdf(),
                 TfidfCounter.countDF(this.invertedIndex.getInvertedIndexMap()),
@@ -63,6 +64,35 @@ public class Index implements Indexer, Searcher, Serializable {
 
         log.info("Inverted Index size: " + this.invertedIndex.getInvertedIndexMap().size());
 
+    }
+
+    public boolean dropDocument(String id) {
+        if (this.invertedIndex.getInvertedIndexMap() == null) {
+            System.out.print(Messages.DOCUMENT_NOT_FOUND.getText());
+            return false;
+        }
+
+        if (this.invertedIndex.getDocuments().isIdUnique(id)) {
+            System.out.print(Messages.DOCUMENT_NOT_FOUND.getText());
+            return false;
+        }
+
+        if (!this.invertedIndex.dropDocumentById(id)) {
+            return false;
+        }
+
+        if (!this.invertedIndex.getDocuments().dropDocumentById(id)) {
+            return false;
+        }
+
+        TfidfCounter.countIDF(this.invertedIndex.getIdf(),
+                TfidfCounter.countDF(this.invertedIndex.getInvertedIndexMap()),
+                this.invertedIndex.getDocuments().getCountOfDocuments());
+
+        this.invertedIndex.setDocVectorNorms(
+                TfidfCounter.countDocTFIDF(this.invertedIndex.getInvertedIndexMap(), this.invertedIndex.getIdf()));
+
+        return true;
     }
 
     /**

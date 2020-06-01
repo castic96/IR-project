@@ -41,4 +41,7 @@ public interface Document {
 
     void setId(String id);
 
+    void setText(String text);
+    void setTitle(String title);
+
 }

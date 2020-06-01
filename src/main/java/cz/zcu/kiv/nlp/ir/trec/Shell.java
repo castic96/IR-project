@@ -4,10 +4,16 @@ import cz.zcu.kiv.nlp.ir.trec.data.*;
 import cz.zcu.kiv.nlp.ir.trec.search.SearchType;
 import cz.zcu.kiv.nlp.ir.trec.utils.Messages;
 import cz.zcu.kiv.nlp.ir.trec.utils.Utils;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
 public class Shell {
+
+    /**
+     * Logger pro třídu Index.
+     */
+    private static Logger log = Logger.getLogger(Shell.class);
 
     private Index index;
     private Scanner sc = new Scanner(System.in);
@@ -64,12 +70,125 @@ public class Shell {
                 case "search_boolean":
                     search(parameters, true);
                     break;
+                case "create_doc":
+                    createDoc(parameters);
+                    break;
+                case "delete_doc":
+                    deleteDoc(parameters);
+                    break;
+                case "update_doc":
+                    updateDoc(parameters);
+                    break;
                 default:
                     System.out.print(Messages.UNKNOWN_COMMAND.getText());
 
             }
             System.out.print(Messages.PROMPT.getText());
         }
+    }
+
+    private void updateDoc(String[] parameters) {
+        Document newDocument;
+        List<Document> documents;
+        String input;
+
+        if (parameters.length == 0) {
+            System.out.print(Messages.LESS_COUNT_OF_PARAMS.getText());
+            return;
+        }
+
+        if (parameters.length > 1) {
+            System.out.print(Messages.MORE_COUNT_OF_PARAMS.getText());
+        }
+
+        if (index == null) {
+            System.out.print(Messages.UNEXISTS_INDEX.getText());
+            return;
+        }
+
+        newDocument = index.getInvertedIndex().getDocuments().getDocumentById(parameters[0]);
+        documents = new ArrayList<>();
+
+        if (!index.dropDocument(parameters[0])) {
+            return;
+        }
+
+        System.out.print(Messages.ENTER_DOC_TITLE.getText());
+        input = sc.nextLine();
+
+        if (!input.isEmpty()) {
+            newDocument.setTitle(input);
+        }
+
+        System.out.print(Messages.ENTER_DOC_TEXT.getText());
+        input = sc.nextLine();
+
+        if (!input.isEmpty()) {
+            newDocument.setText(input);
+        }
+
+        documents.add(newDocument);
+
+        index.index(documents);
+
+        System.out.print(Messages.DOCS_UPDATED_SUCCEED.getText());
+
+    }
+
+    private void deleteDoc(String[] parameters) {
+        if (parameters.length == 0) {
+            System.out.print(Messages.LESS_COUNT_OF_PARAMS.getText());
+            return;
+        }
+
+        if (parameters.length > 1) {
+            System.out.print(Messages.MORE_COUNT_OF_PARAMS.getText());
+        }
+
+        if (index == null) {
+            System.out.print(Messages.UNEXISTS_INDEX.getText());
+            return;
+        }
+
+        if (index.dropDocument(parameters[0])) {
+            System.out.print(Messages.DROP_DOC_SUCCEED.getText());
+            return;
+        }
+    }
+
+    private void createDoc(String[] parameters) {
+        DocumentNew newDocument;
+        List<Document> documents;
+
+        if (parameters.length > 0) {
+            System.out.print(Messages.IRELEVANT_PARAMS.getText());
+        }
+
+        if (index == null) {
+            System.out.print(Messages.UNEXISTS_INDEX.getText());
+            return;
+        }
+
+        newDocument = new DocumentNew();
+        documents = new ArrayList<>();
+
+        System.out.print(Messages.ENTER_DOC_ID.getText());
+        newDocument.setId(sc.nextLine());
+
+        System.out.print(Messages.ENTER_DOC_TITLE.getText());
+        newDocument.setTitle(sc.nextLine());
+
+        System.out.print(Messages.ENTER_DOC_TEXT.getText());
+        newDocument.setText(sc.nextLine());
+
+        newDocument.setDate(new Date());
+
+        documents.add(newDocument);
+
+        index.index(documents);
+
+        System.out.print(Messages.DOCS_INDEXED_SUCCEED.getText());
+
     }
 
     private void search(String[] parameters, boolean isBooleanSearch) {
@@ -257,7 +376,7 @@ public class Shell {
     }
 
     private void printResults(List<Result> results, String query, int top) {
-
+        Document document;
         Result result;
 
         System.out.println(Messages.RESULTS_PRINT.getText() + "\"" + query + "\"");
@@ -269,9 +388,15 @@ public class Shell {
             }
 
             result = results.get(i);
+            document = index.getInvertedIndex().getDocuments().getDocumentById(result.getDocumentID());
+
+            if (document == null) {
+                log.error(Messages.DOCUMENT_NOT_FOUND.getText());
+                return;
+            }
 
             System.out.println(result.getRank() + ".\tDocument ID: " + result.getDocumentID() + "\tScore: " + result.getScore());
-            System.out.println("\tDocument title: " + index.getInvertedIndex().getDocuments().getDocumentById(result.getDocumentID()).getTitle());
+            System.out.println("\tDocument title: " + document.getTitle());
 
             System.out.println();
 

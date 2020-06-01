@@ -12,6 +12,8 @@ public enum Messages {
             "\tload_index <index_name>\t- load the specified index\n" +
             "\tsave_index <index_name>\t- save the current loaded index and set name of it\n" +
             "\tindex_docs [file_path]\t- index docs from JSON file, optionally from 'file_path' file\n" +
+            "\tcreate_doc\t- create new document\n" +
+            "\tupdate_doc <doc_id>\t- update document with specified id\n" +
             "\tdelete_doc <doc_id>\t- delete document with specified id\n" +
             "\tsearch_normal\t- search in indexed documents using NORMAL query (without clauses AND, OR, NOT)\n" +
             "\tsearch_boolean\t- search in indexed documents using BOOLEAN query (AND, OR, NOT)\n\n" +
@@ -36,12 +38,20 @@ public enum Messages {
     FILE_DOES_NOT_EXIST("File with the specified name does not exist. Ignoring the command...\n"),
     UNEXISTS_INDEX("Index does not exist. Ignoring the command...\n"),
     DEFAULT_JSON_PATH("File path has not been entered. Using default path: "),
-    DOCS_INDEXED_SUCCEED("Documents has been indexed successfully.\n"),
+    DOCS_INDEXED_SUCCEED("Indexing done.\n"),
     RESULTS_PRINT("Results for query: "),
     TOP_RESULTS("Top: "),
     SET_COUNT_OF_HITS("Enter count of top x results: "),
     DEFAULT_TOP_HITS("Invalid count of top x results. Using default value top 10 results...\n"),
-    QUERY_PARSER_INVALID("Invalid syntax of boolean query. Ignoring the command...");
+    QUERY_PARSER_INVALID("Invalid syntax of boolean query. Ignoring the command..."),
+    DOCUMENT_NOT_FOUND("Document with the specified id not found. Ignoring the command...\n"),
+    NOT_UNIQUE_ID("is already used. Document has not been indexed..."),
+    ENTER_DOC_ID("Enter document id: "),
+    ENTER_DOC_TITLE("Enter title of document: "),
+    ENTER_DOC_TEXT("Enter text of document: "),
+    DROP_DOC_SUCCEED("Document has been deleted successfully.\n"),
+    DROP_DOC_FAILURE("Deleting the document failed.\n"),
+    DOCS_UPDATED_SUCCEED("Updating done.\n");
 
     private final String text;
 

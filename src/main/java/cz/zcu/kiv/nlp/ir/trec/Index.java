@@ -31,12 +31,14 @@ public class Index implements Indexer, Searcher, Serializable {
 
     private Preprocessing preprocessing;
 
+    private static final String STOP_WORDS_PATH = "config/stopwords.txt";
+
     private static final int DEFAULT_COUNT_OF_TOP = 3000;
 
 
     public Index() {
         this.preprocessing = new BasicPreprocessing(new CzechStemmerLight(), new AdvancedTokenizer(),
-                Utils.loadStopWords("stopwords.txt"), false, true, true, true);
+                Utils.loadStopWords(STOP_WORDS_PATH), false, true, true, true);
         this.invertedIndex = new InvertedIndex();
     }
 

@@ -1,8 +1,6 @@
 package cz.zcu.kiv.nlp.ir.trec;
-import cz.zcu.kiv.nlp.ir.trec.data.Document;
-import cz.zcu.kiv.nlp.ir.trec.data.Result;
-import cz.zcu.kiv.nlp.ir.trec.data.Topic;
-import cz.zcu.kiv.nlp.ir.trec.search.SearchType;
+
+import cz.zcu.kiv.nlp.ir.trec.data.*;
 import cz.zcu.kiv.nlp.ir.trec.utils.IOUtils;
 import cz.zcu.kiv.nlp.ir.trec.utils.SerializedDataHelper;
 import org.apache.log4j.*;
@@ -77,11 +75,6 @@ public class TestTrecEval {
         }
         log.info("Documents: " + documents.size());
 
-        index.index(documents);
-
-        log.info("Documents indexed.");
-//        List<Result> resultHits = index.search("marvanové AND ods", SearchType.BOOLEAN);
-//        log.info("Count of hits: " + resultHits.size());
 
         List<String> lines = new ArrayList<String>();
 
@@ -92,7 +85,6 @@ public class TestTrecEval {
             //kombinace např. pokud budete vyhledávat jen pomocí title (t.getTitle()) nebo jen pomocí description (t.getDescription())
             //nebo jejich kombinací (t.getTitle() + " " + t.getDescription())
             List<Result> resultHits = index.search(t.getTitle() + " " + t.getDescription() + " " + t.getNarrative());
-            log.info("Count of hits: " + resultHits.size());
 
             Comparator<Result> cmp = new Comparator<Result>() {
                 public int compare(Result o1, Result o2) {

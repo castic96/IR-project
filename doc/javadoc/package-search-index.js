@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"cz.zcu.kiv.nlp.ir.trec"},{"l":"cz.zcu.kiv.nlp.ir.trec.counter"},{"l":"cz.zcu.kiv.nlp.ir.trec.data"},{"l":"cz.zcu.kiv.nlp.ir.trec.data.utils"},{"l":"cz.zcu.kiv.nlp.ir.trec.preprocessing"},{"l":"cz.zcu.kiv.nlp.ir.trec.search"},{"l":"cz.zcu.kiv.nlp.ir.trec.utils"}]
